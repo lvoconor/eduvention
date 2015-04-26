@@ -30,12 +30,12 @@ import org.eclipse.swt.SWT;
  * <p>
  */
 
-public class AlertView extends ViewPart {
+public class AlertsView extends ViewPart {
 
 	/**
 	 * The ID of the view as specified by the extension.
 	 */
-	public static final String ID = "edu.stanford.eduvention.views.AlertView";
+	public static final String ID = "edu.stanford.eduvention.views.AlertsView";
 
 	private TableViewer viewer;
 	private Action action1;
@@ -79,7 +79,7 @@ public class AlertView extends ViewPart {
 	/**
 	 * The constructor.
 	 */
-	public AlertView() {
+	public AlertsView() {
 	}
 
 	/**
@@ -106,7 +106,7 @@ public class AlertView extends ViewPart {
 		menuMgr.setRemoveAllWhenShown(true);
 		menuMgr.addMenuListener(new IMenuListener() {
 			public void menuAboutToShow(IMenuManager manager) {
-				AlertView.this.fillContextMenu(manager);
+				AlertsView.this.fillContextMenu(manager);
 			}
 		});
 		Menu menu = menuMgr.createContextMenu(viewer.getControl());
@@ -177,7 +177,7 @@ public class AlertView extends ViewPart {
 	private void showMessage(String message) {
 		MessageDialog.openInformation(
 			viewer.getControl().getShell(),
-			"Alert View",
+			"Alerts",
 			message);
 	}
 
