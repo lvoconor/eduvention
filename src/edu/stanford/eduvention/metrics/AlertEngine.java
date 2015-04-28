@@ -1,3 +1,5 @@
+package edu.stanford.eduvention.metrics;
+
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.Iterator;
