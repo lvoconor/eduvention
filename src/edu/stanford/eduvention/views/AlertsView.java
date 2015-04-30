@@ -2,6 +2,9 @@ package edu.stanford.eduvention.views;
 
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.part.*;
+import org.eclipse.core.resources.IResourceChangeEvent;
+import org.eclipse.core.resources.IResourceChangeListener;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.jface.action.*;
@@ -29,7 +32,7 @@ import edu.stanford.eduvention.metrics.*;
  * <p>
  */
 
-public class AlertsView extends ViewPart {
+public class AlertsView extends ViewPart implements IResourceChangeListener {
 
 	/**
 	 * The ID of the view as specified by the extension.
@@ -78,6 +81,7 @@ public class AlertsView extends ViewPart {
 	 * The constructor.
 	 */
 	public AlertsView() {
+		ResourcesPlugin.getWorkspace().addResourceChangeListener(this, IResourceChangeEvent.POST_CHANGE);
 	}
 
 	/**
@@ -148,5 +152,10 @@ public class AlertsView extends ViewPart {
 	 */
 	public void setFocus() {
 		viewer.getControl().setFocus();
+	}
+
+	@Override
+	public void resourceChanged(IResourceChangeEvent event) {
+		viewer.refresh();		
 	}
 }
