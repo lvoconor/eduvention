@@ -1,5 +1,6 @@
 package edu.stanford.eduvention.metrics;
 
+import java.io.InputStream;
 import java.util.ArrayList;
 
 import org.eclipse.core.resources.IContainer;
@@ -63,11 +64,12 @@ public class MetricManager {
 	private AlertFile processFile(IFile file)
 	{
 		try {
-			byte[] buf = new byte[8192];
-			file.getContents().read(buf);
+			InputStream is = file.getContents();
+			java.util.Scanner s = new java.util.Scanner(is).useDelimiter("\\A");
+		    String contents = s.hasNext() ? s.next() : "";
 			AlertFile aFile = new AlertFile();
 			aFile.name = file.getName();
-			aFile.contents = new String(buf);
+			aFile.contents = contents;
 			return aFile;
 		}
 		catch (Exception e) {
