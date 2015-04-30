@@ -10,6 +10,8 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 
+import edu.stanford.eduvention.AlertFile;
+
 public class MetricManager {
 	public Object[] get() {
 		IProject[] projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
@@ -23,7 +25,7 @@ public class MetricManager {
 		for (AlertFile code: files) {
 			if (code.name.endsWith(".java")) {
 				/* Alert 1: check for 'a' */
-				IMetric simpleEngine = new SimpleEngine();
+				IMetric simpleEngine = new SimpleMetric();
 				String warning = simpleEngine.getAlert(code.contents);
 				if (warning != null) {
 					alerts.add(code.name + ": " + warning);

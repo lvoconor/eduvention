@@ -1,4 +1,5 @@
-package edu.stanford.eduvention.metrics;
+package edu.stanford.eduvention;
+
 
 public class AlertFile {
 	public String name;

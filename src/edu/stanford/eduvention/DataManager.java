@@ -1,17 +1,12 @@
 package edu.stanford.eduvention;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import net.sf.json.JSONObject;
 
 import org.apache.http.*;
 import org.apache.http.client.HttpClient;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.impl.client.HttpClients;
 public class DataManager {
 
 	public static void main(String[] args) {

@@ -1,6 +1,6 @@
 package edu.stanford.eduvention.metrics;
 
-public class SimpleEngine implements IMetric {
+public class SimpleMetric implements IMetric {
 
 	@Override
 	public String getAlert(String code) {

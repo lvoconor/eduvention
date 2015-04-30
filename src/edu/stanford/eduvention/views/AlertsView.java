@@ -41,6 +41,7 @@ public class AlertsView extends ViewPart implements IResourceChangeListener {
 
 	private TableViewer viewer;
 	private Action refresh;
+	private MetricManager metrics;
 
 	/*
 	 * The content provider class is responsible for
@@ -51,14 +52,14 @@ public class AlertsView extends ViewPart implements IResourceChangeListener {
 	 * it and always show the same content 
 	 * (like Task List, for example).
 	 */
-	 
+	
 	class ViewContentProvider implements IStructuredContentProvider {
 		public void inputChanged(Viewer v, Object oldInput, Object newInput) {
 		}
 		public void dispose() {
 		}
 		public Object[] getElements(Object parent) {
-			MetricManager metrics = new MetricManager();
+			metrics = new MetricManager();
 			return metrics.get();
 		}
 	}
