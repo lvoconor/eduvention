@@ -16,5 +16,6 @@ Require-Bundle: org.eclipse.ui,
  org.apache.httpcomponents.httpcore;bundle-version="4.3.3"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
-Bundle-ClassPath: lib/,
+Bundle-ClassPath: lib/src_code_analytics.jar,
+ lib/json-lib-2.4-jdk15.jar,
  .
