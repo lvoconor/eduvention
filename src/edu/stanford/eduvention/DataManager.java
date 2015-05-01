@@ -12,9 +12,9 @@ public class DataManager {
 	public static void main(String[] args) {
 		HttpClient httpClient = HttpClientBuilder.create().build(); //Use this instead 
 	    try {
-	        HttpPost request = new HttpPost("http://eduvention-website.herokuapp.com/snapshot/create");
+	        HttpPost request = new HttpPost("http://eduvention-website.herokuapp.com/snapshots/create");
 	        
-	     String jsonString = "request="
+	        String jsonString = "request="
 	     		+ "{\"assignment_id\":\"6\", "
 	     		+ "\"student_id\":\"5\","
 	     		+ "\"snapshot\": \"class Karel\","

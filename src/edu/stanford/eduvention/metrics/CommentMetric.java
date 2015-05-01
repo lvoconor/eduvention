@@ -8,7 +8,7 @@ import parser.SourceCodeAnalytics;
 
 public class CommentMetric implements IMetric {
 
-	private static final Double COMMENT_FRAC = .3;
+	private static final Double COMMENT_FRAC = .10;
 	
 	@Override
 	public String getAlert(AlertFile aFile) {
