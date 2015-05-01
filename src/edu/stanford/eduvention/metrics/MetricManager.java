@@ -14,9 +14,12 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 
 import edu.stanford.eduvention.AlertFile;
+import edu.stanford.eduvention.DataManager;
 
 public class MetricManager {
 	public Object[] get() {
+		DataManager dm = new DataManager();
+		dm.main(null);
 		IProject[] projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
 		ArrayList<AlertFile> files = new ArrayList<AlertFile>();
 		for (IProject project: projects) {

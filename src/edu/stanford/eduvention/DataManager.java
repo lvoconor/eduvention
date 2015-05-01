@@ -9,7 +9,7 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClientBuilder;
 public class DataManager {
 
-	public static void main(String[] args) {
+	public void main(String[] args) {
 		HttpClient httpClient = HttpClientBuilder.create().build(); //Use this instead 
 	    try {
 	        HttpPost request = new HttpPost("http://eduvention-website.herokuapp.com/snapshots/create");
