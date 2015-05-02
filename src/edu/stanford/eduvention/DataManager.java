@@ -1,5 +1,8 @@
 package edu.stanford.eduvention;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import net.sf.json.JSONObject;
 
 import org.apache.http.*;
@@ -35,7 +38,9 @@ public class DataManager {
 	     		+ "\","
 	     		+ "\"snapshot\": \"class Karel\","
 	     		+ "\"alert\": \"1\","
-	     		+ "\"datetime\": \"01/01/2015\"}";
+	     		+ "\"datetime\": \""
+	     		+ new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date())
+	     		+ "\"}";
 	     
 	        StringEntity params = new StringEntity(jsonString);
 	        request.addHeader("content-type", "application/x-www-form-urlencoded");
