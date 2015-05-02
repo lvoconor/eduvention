@@ -14,12 +14,9 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 
 import edu.stanford.eduvention.AlertFile;
-import edu.stanford.eduvention.DataManager;
 
 public class MetricManager {
 	public Object[] get() {
-		DataManager dm = new DataManager();
-		dm.main(null);
 		IProject[] projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
 		ArrayList<AlertFile> files = new ArrayList<AlertFile>();
 		for (IProject project: projects) {
@@ -27,9 +24,10 @@ public class MetricManager {
 		}
 		
 		ArrayList<String> alerts = new ArrayList<String>();
+		String toAdd;
 		
 		for (AlertFile code: files) {
-			if (code.name.endsWith(".java")) {			
+			if (code.name.endsWith(".java")) {
 				/************************************************
 				 * 												*
 				 * 				ALERTS GO HERE					*
@@ -37,13 +35,19 @@ public class MetricManager {
 				 ************************************************/
 
 				/* Alert 1: check for 'a' */
-				addAlert(new SimpleMetric(), alerts, code);
-
+				toAdd = addAlert(new SimpleMetric(), code);
+				if (toAdd != null)
+					alerts.add(toAdd);
+				
 				/* Alert 2: check comment ratio */
-				addAlert(new CommentMetric(), alerts, code);
+				toAdd = addAlert(new CommentMetric(), code);
+				if (toAdd != null)
+					alerts.add(toAdd);
 				
 				/* Alert 3: check average method size */
-				addAlert(new DecompMetric(), alerts, code);
+				toAdd = addAlert(new DecompMetric(), code);
+				if (toAdd != null)
+					alerts.add(toAdd);
 			}
 		}
 
@@ -112,10 +116,11 @@ public class MetricManager {
 		return lines;
 	}
 	
-	private void addAlert(IMetric metric, ArrayList<String> alerts, AlertFile code) {
+	private String addAlert(IMetric metric, AlertFile code) {
 		String warning = metric.getAlert(code);
 		if (warning != null) {
-			alerts.add(code.name + ": " + warning);
+			return code.name + ": " + warning;
 		}
+		return null;
 	}
 }

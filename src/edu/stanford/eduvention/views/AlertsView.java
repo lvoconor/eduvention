@@ -1,10 +1,8 @@
 package edu.stanford.eduvention.views;
 
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.part.*;
-import org.eclipse.core.resources.IResourceChangeEvent;
-import org.eclipse.core.resources.IResourceChangeListener;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.jface.action.*;
@@ -12,6 +10,9 @@ import org.eclipse.ui.*;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.SWT;
 
+import edu.stanford.eduvention.ChangeListener;
+import edu.stanford.eduvention.DataManager;
+import edu.stanford.eduvention.IUpdate;
 import edu.stanford.eduvention.metrics.*;
 
 /**
@@ -32,7 +33,7 @@ import edu.stanford.eduvention.metrics.*;
  * <p>
  */
 
-public class AlertsView extends ViewPart implements IResourceChangeListener {
+public class AlertsView extends ViewPart implements IUpdate {
 
 	/**
 	 * The ID of the view as specified by the extension.
@@ -40,8 +41,10 @@ public class AlertsView extends ViewPart implements IResourceChangeListener {
 	public static final String ID = "edu.stanford.eduvention.views.AlertsView";
 
 	private TableViewer viewer;
-	private Action refresh;
+	private Action openPrefs;
 	private MetricManager metrics;
+	private PrefsView prefs;
+	private ChangeListener listener;
 
 	/*
 	 * The content provider class is responsible for
@@ -59,7 +62,6 @@ public class AlertsView extends ViewPart implements IResourceChangeListener {
 		public void dispose() {
 		}
 		public Object[] getElements(Object parent) {
-			metrics = new MetricManager();
 			return metrics.get();
 		}
 	}
@@ -82,7 +84,8 @@ public class AlertsView extends ViewPart implements IResourceChangeListener {
 	 * The constructor.
 	 */
 	public AlertsView() {
-		ResourcesPlugin.getWorkspace().addResourceChangeListener(this, IResourceChangeEvent.POST_CHANGE);
+		metrics = new MetricManager();
+		prefs = new PrefsView(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell());
 	}
 
 	/**
@@ -101,6 +104,8 @@ public class AlertsView extends ViewPart implements IResourceChangeListener {
 		makeActions();
 		hookContextMenu();
 		contributeToActionBars();
+		
+		listener = new ChangeListener(this);
 	}
 
 	private void hookContextMenu() {
@@ -123,28 +128,28 @@ public class AlertsView extends ViewPart implements IResourceChangeListener {
 	}
 
 	private void fillLocalPullDown(IMenuManager manager) {
-		manager.add(refresh);
+		manager.add(openPrefs);
 	}
 
 	private void fillContextMenu(IMenuManager manager) {
-		manager.add(refresh);
+		manager.add(openPrefs);
 		// Other plug-ins can contribute there actions here
 		manager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 	}
 	
 	private void fillLocalToolBar(IToolBarManager manager) {
-		manager.add(refresh);
+		manager.add(openPrefs);
 	}
 
 	private void makeActions() {
-		refresh = new Action() {
+		openPrefs = new Action() {
 			public void run() {
-				viewer.refresh();
+				prefs.open();
 			}
 		};
-		refresh.setText("Refresh");
-		refresh.setToolTipText("Refresh alerts");
-		refresh.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().
+		openPrefs.setText("Preferences");
+		openPrefs.setToolTipText("Open preferences");
+		openPrefs.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().
 			getImageDescriptor(ISharedImages.IMG_OBJS_INFO_TSK));
 	}
 
@@ -154,9 +159,9 @@ public class AlertsView extends ViewPart implements IResourceChangeListener {
 	public void setFocus() {
 		viewer.getControl().setFocus();
 	}
-
+	
 	@Override
-	public void resourceChanged(IResourceChangeEvent event) {
-		viewer.refresh();		
+	public void FileSave() {
+		viewer.refresh();
 	}
 }
