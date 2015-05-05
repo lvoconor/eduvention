@@ -1,7 +1,6 @@
 package edu.stanford.eduvention.views;
 
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.part.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.graphics.Image;
@@ -11,7 +10,6 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.SWT;
 
 import edu.stanford.eduvention.ChangeListener;
-import edu.stanford.eduvention.DataManager;
 import edu.stanford.eduvention.IUpdate;
 import edu.stanford.eduvention.metrics.*;
 

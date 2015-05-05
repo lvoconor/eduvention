@@ -1,8 +1,8 @@
 package edu.stanford.eduvention.metrics;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -27,7 +27,7 @@ public class MetricManager {
 		String toAdd;
 		
 		for (AlertFile code: files) {
-			if (code.name.endsWith(".java")) {
+			if (code != null && code.name != null && code.name.endsWith(".java")) {
 				/************************************************
 				 * 												*
 				 * 				ALERTS GO HERE					*
@@ -91,18 +91,16 @@ public class MetricManager {
 		catch (CoreException e) {
 			return null;
 		}
-		if (is != null) {
-			s = new java.util.Scanner(is).useDelimiter("\\A");
+		if (is == null) {
+			return null;
 		}
+		s = new Scanner(is);
+		s.useDelimiter("\\A");
 	    String contents = s.hasNext() ? s.next() : "";
 		AlertFile aFile = new AlertFile();
 		aFile.name = file.getName();
 		aFile.contents = contents;
 		aFile.lines = getNumLines(contents);
-		try {
-			is.close();
-		} catch (IOException e) {
-		}
 		s.close();
 		return aFile;
 	}

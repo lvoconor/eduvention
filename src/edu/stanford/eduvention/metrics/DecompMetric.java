@@ -15,7 +15,7 @@ public class DecompMetric implements IMetric {
 	@Override
 	public String getAlert(AlertFile aFile) {
 		double avgSize = getAverageMethodLength(aFile.contents);
-		if (avgSize > -1 && avgSize > MAX_AVG_SIZE) {
+		if ((avgSize > -1) && (avgSize > MAX_AVG_SIZE)) {
 			return "Your average method size is " + avgSize + " lines. Consider decomposing your functions.";
 		} else {
 			return null;

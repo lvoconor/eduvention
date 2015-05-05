@@ -14,6 +14,7 @@ import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.osgi.service.prefs.BackingStoreException;
 
+@SuppressWarnings("restriction")
 public class DataManager {
 
 	private IEclipsePreferences prefs;
