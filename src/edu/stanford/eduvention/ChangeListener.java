@@ -34,7 +34,7 @@ public class ChangeListener implements IResourceChangeListener {
 		}
 		if (curTime - lastNetworkUpdate > MIN_NETWORK_WAIT) {
 			lastNetworkUpdate = curTime;
-			dataManager.main();
+			//dataManager.main();
 		}
 	}
 }

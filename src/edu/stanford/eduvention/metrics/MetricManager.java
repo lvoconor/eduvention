@@ -14,20 +14,24 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 
 import edu.stanford.eduvention.AlertFile;
+import edu.stanford.eduvention.views.Alert;
 
 public class MetricManager {
-	public Object[] get() {
+	/*
+	 * Converts all the files in the workspace to AlertFile objects
+	 * TODO Add functionality to select only relevant projects in workspace
+	 */
+	public ArrayList<AlertFile> getAlertFiles(){
 		IProject[] projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
 		ArrayList<AlertFile> files = new ArrayList<AlertFile>();
 		for (IProject project: projects) {
 			files.addAll(processContainer(project));
 		}
+		//remove non-code files 
+		ArrayList<AlertFile> filteredFiles = filterNonCode(files);
 		
-		ArrayList<String> alerts = new ArrayList<String>();
-		String toAdd;
-		
-		for (AlertFile code: files) {
-			if (code.name.endsWith(".java")) {
+		Alert toAdd;		
+		for (AlertFile file: filteredFiles) {
 				/************************************************
 				 * 												*
 				 * 				ALERTS GO HERE					*
@@ -35,30 +39,45 @@ public class MetricManager {
 				 ************************************************/
 
 				/* Alert 1: check for 'a' */
-				toAdd = addAlert(new SimpleMetric(), code);
+				toAdd = new SimpleMetric().getAlert(file);
 				if (toAdd != null)
-					alerts.add(toAdd);
-				
+					file.alerts.add(toAdd);
+					
 				/* Alert 2: check comment ratio */
-				toAdd = addAlert(new CommentMetric(), code);
+				toAdd = new CommentMetric().getAlert(file);
 				if (toAdd != null)
-					alerts.add(toAdd);
+					file.alerts.add(toAdd);
 				
 				/* Alert 3: check average method size */
-				toAdd = addAlert(new DecompMetric(), code);
+				toAdd = new DecompMetric().getAlert(file);
 				if (toAdd != null)
-					alerts.add(toAdd);
+					file.alerts.add(toAdd);
+				
+		}
+		return filteredFiles;
+
+	}
+	/*
+	 * Returns a list of warning Strings 
+	 */
+	public Object[] get() {
+		ArrayList<String> alertStrings = new ArrayList<String>();
+		
+		ArrayList<AlertFile> files = getAlertFiles();
+		for (AlertFile file: files) {
+			for( Alert a: file.alerts){
+				alertStrings.add(a.getWarning());
 			}
 		}
 
 		/* Add note if there are no alerts */
-		if (alerts.size() == 0) {
-			alerts.add("No alerts!");
+		if (alertStrings.size() == 0) {
+			alertStrings.add("No alerts!");
 		}
 
 		/* Convert ArrayList to array and return. */
-		String[] ret = new String[alerts.size()];
-		alerts.toArray(ret);
+		String[] ret = new String[alertStrings.size()];
+		alertStrings.toArray(ret);
 		return ret;
 	}
 	
@@ -80,7 +99,9 @@ public class MetricManager {
 		}
 		return files;
 	}
-	
+	/*
+	 * Converts an IFile into an AlertFile
+	 */
 	private AlertFile processFile(IFile file)
 	{
 		InputStream is = null;
@@ -116,11 +137,20 @@ public class MetricManager {
 		return lines;
 	}
 	
-	private String addAlert(IMetric metric, AlertFile code) {
-		String warning = metric.getAlert(code);
-		if (warning != null) {
-			return code.name + ": " + warning;
+	private Alert addAlert(IMetric metric, AlertFile code) {
+		Alert a = metric.getAlert(code);
+		return a;
+	}
+	/*
+	 * Removes files that don't end with ".java"
+	 */
+	private ArrayList<AlertFile> filterNonCode(ArrayList<AlertFile> files){
+		ArrayList<AlertFile> filtered = new ArrayList<AlertFile>();
+		for(AlertFile f: files){
+			if(f != null && f.name.endsWith(".java")){
+				filtered.add(f); 
+			}
 		}
-		return null;
+		return filtered;
 	}
 }

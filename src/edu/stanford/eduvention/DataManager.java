@@ -3,6 +3,7 @@ package edu.stanford.eduvention;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
 import org.apache.http.*;
@@ -30,7 +31,6 @@ public class DataManager {
 		loadSettings();
 	    try {
 	        HttpPost request = new HttpPost("http://eduvention-website.herokuapp.com/snapshots/create");
-	        
 	        String jsonString = "request="
 	     		+ "{\"assignment_id\":\"6\", "
 	     		+ "\"student_id\":\""
@@ -53,13 +53,18 @@ public class DataManager {
 	    }
 	}
 
-	public static String generateJSONString(int studentId, int assignmentId, String snapshot, int alert, String datetime){
+	public static String generateJSONString(int studentId, int assignmentId, String snapshot, int alert, String datetime, String alertType){
 		JSONObject j = new JSONObject();
 		j.put("assignment_id", assignmentId);
 		j.put("student_id", studentId);
 		j.put("snapshot", snapshot);
 		j.put("alert", alert);
 		j.put("datetime", datetime);
+		j.put("alert_type", alertType);
+		
+		
+		JSONArray a = new JSONArray();
+		//a.add()
 		return j.toString();
 	}
 	
