@@ -1,5 +1,7 @@
 package edu.stanford.eduvention;
 
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -7,6 +9,7 @@ import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
 import org.apache.http.*;
+import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
@@ -14,6 +17,8 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.osgi.service.prefs.BackingStoreException;
+
+import edu.stanford.eduvention.views.Alert;
 
 public class DataManager {
 
@@ -52,7 +57,50 @@ public class DataManager {
 	        // handle exception here
 	    }
 	}
-
+	
+	public void postSnapshot(AlertFile f){
+		String snapshotString = "request=" + generateJSONString(f);
+		HttpPost request = new HttpPost("http://eduvention-website.herokuapp.com/snapshots/create");
+		StringEntity params = null;
+		try {
+			params = new StringEntity(snapshotString);
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+        request.addHeader("content-type", "application/x-www-form-urlencoded");
+        request.setEntity(params);
+        HttpResponse response = null;
+		try {
+			response = httpClient.execute(request);
+		} catch (ClientProtocolException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+        System.out.println(response.getStatusLine().toString());
+		
+	}
+	private String generateJSONString(AlertFile f){
+		loadSettings();
+		JSONObject j = new JSONObject();
+		JSONArray alerts = new JSONArray();
+		j.put("assignment_id", 6); //TODO store assignment_id
+		j.put("student_id", sunet);
+		j.put("snapshot", f.contents);
+		j.put("datetime", new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
+		for(Alert alert: f.alerts){
+			JSONObject alertObject = new JSONObject();
+			alertObject.put("alert_type", alert.type);
+			//TODO add line numbers
+			alerts.add(alertObject); 
+		}
+		j.put("alerts", alerts);
+		//TODO add filename
+		return j.toString();
+	}
 	public static String generateJSONString(int studentId, int assignmentId, String snapshot, int alert, String datetime, String alertType){
 		JSONObject j = new JSONObject();
 		j.put("assignment_id", assignmentId);
