@@ -1,7 +1,11 @@
 package edu.stanford.eduvention.views;
 
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.part.*;
+import org.eclipse.core.resources.IResourceChangeEvent;
+import org.eclipse.core.resources.IResourceChangeListener;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.jface.action.*;
@@ -9,8 +13,7 @@ import org.eclipse.ui.*;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.SWT;
 
-import edu.stanford.eduvention.ChangeListener;
-import edu.stanford.eduvention.IUpdate;
+import edu.stanford.eduvention.DataManager;
 import edu.stanford.eduvention.metrics.*;
 
 /**
@@ -31,18 +34,16 @@ import edu.stanford.eduvention.metrics.*;
  * <p>
  */
 
-public class AlertsView extends ViewPart implements IUpdate {
+public class AlertsView extends ViewPart implements IResourceChangeListener {
 
 	/**
 	 * The ID of the view as specified by the extension.
 	 */
 	public static final String ID = "edu.stanford.eduvention.views.AlertsView";
-
+	
 	private TableViewer viewer;
 	private Action openPrefs;
-	private MetricManager metrics;
 	private PrefsView prefs;
-	private ChangeListener listener;
 
 	/*
 	 * The content provider class is responsible for
@@ -60,7 +61,10 @@ public class AlertsView extends ViewPart implements IUpdate {
 		public void dispose() {
 		}
 		public Object[] getElements(Object parent) {
-			return metrics.get();
+			if (MetricManager.isUpdating()) {
+				return new String[] {"Updating alerts."};
+			}
+			return MetricManager.get();
 		}
 	}
 	class ViewLabelProvider extends LabelProvider implements ITableLabelProvider {
@@ -82,8 +86,8 @@ public class AlertsView extends ViewPart implements IUpdate {
 	 * The constructor.
 	 */
 	public AlertsView() {
-		metrics = new MetricManager();
 		prefs = new PrefsView(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell());
+		ResourcesPlugin.getWorkspace().addResourceChangeListener(this, IResourceChangeEvent.POST_CHANGE);
 	}
 
 	/**
@@ -102,8 +106,6 @@ public class AlertsView extends ViewPart implements IUpdate {
 		makeActions();
 		hookContextMenu();
 		contributeToActionBars();
-		
-		listener = new ChangeListener(this);
 	}
 
 	private void hookContextMenu() {
@@ -159,7 +161,21 @@ public class AlertsView extends ViewPart implements IUpdate {
 	}
 	
 	@Override
-	public void FileSave() {
-		viewer.refresh();
+	public void resourceChanged(IResourceChangeEvent event) {
+		new Thread(new Runnable() {
+	    	public void run() {
+    			MetricManager.update();
+    			Display.getDefault().asyncExec(new Runnable() {
+    	               public void run() {
+    	                  viewer.refresh();
+    	               }
+    			});
+    			new Thread(new Runnable() {
+    		    	public void run() {
+    	    			DataManager.update();
+    	    		}
+    		    }).start();
+	    	}
+	    }).start();
 	}
 }

@@ -17,17 +17,12 @@ import org.osgi.service.prefs.BackingStoreException;
 @SuppressWarnings("restriction")
 public class DataManager {
 
-	private IEclipsePreferences prefs;
-	private String name;
-	private String sunet;
-	HttpClient httpClient;
-	
-	public DataManager() {
-		prefs = InstanceScope.INSTANCE.getNode("edu.stanford.eduvention");
-		httpClient = HttpClientBuilder.create().build();
-	}
-	
-	public void main() {
+	private static IEclipsePreferences prefs = InstanceScope.INSTANCE.getNode("edu.stanford.eduvention");
+	private static String name;
+	private static String sunet;
+	private static HttpClient httpClient = HttpClientBuilder.create().build();;
+
+	public static void update() {
 		loadSettings();
 	    try {
 	        HttpPost request = new HttpPost("http://eduvention-website.herokuapp.com/snapshots/create");
@@ -64,13 +59,13 @@ public class DataManager {
 		return j.toString();
 	}
 	
-	private void loadSettings() {
+	private static void loadSettings() {
 		  try {
 			prefs.sync();
 		  } catch (BackingStoreException e) {
 		  }
-		  this.sunet = prefs.get("sunet", "unknown");
-		  this.name= prefs.get("name", "unknown");
+		  sunet = prefs.get("sunet", "unknown");
+		  name= prefs.get("name", "unknown");
 	}
 
 }

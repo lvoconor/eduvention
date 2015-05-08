@@ -16,14 +16,27 @@ import org.eclipse.core.runtime.CoreException;
 import edu.stanford.eduvention.AlertFile;
 
 public class MetricManager {
-	public Object[] get() {
+	
+	private static String[] alerts = new String[]{"Alerts loading."};
+	private static Boolean updating = false;
+	
+	
+	public static Object[] get() {
+		return alerts;
+	}
+
+	public static void update() {
+		if (updating) {
+			return;
+		}
+		updating = true;
 		IProject[] projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
 		ArrayList<AlertFile> files = new ArrayList<AlertFile>();
 		for (IProject project: projects) {
 			files.addAll(processContainer(project));
 		}
 		
-		ArrayList<String> alerts = new ArrayList<String>();
+		ArrayList<String> newAlerts = new ArrayList<String>();
 		String toAdd;
 		
 		for (AlertFile code: files) {
@@ -34,37 +47,38 @@ public class MetricManager {
 				 * 												*
 				 ************************************************/
 
-				/* Alert 1: check for 'a' */
+				/* Alert 1: check for 'e' */
 				toAdd = addAlert(new SimpleMetric(), code);
 				if (toAdd != null)
-					alerts.add(toAdd);
+					newAlerts.add(toAdd);
 				
 				/* Alert 2: check comment ratio */
 				toAdd = addAlert(new CommentMetric(), code);
 				if (toAdd != null)
-					alerts.add(toAdd);
+					newAlerts.add(toAdd);
 				
 				/* Alert 3: check average method size */
 				toAdd = addAlert(new DecompMetric(), code);
 				if (toAdd != null)
-					alerts.add(toAdd);
+					newAlerts.add(toAdd);
 			}
 		}
 
 		/* Add note if there are no alerts */
-		if (alerts.size() == 0) {
-			alerts.add("No alerts!");
+		if (newAlerts.size() == 0) {
+			newAlerts.add("No alerts!");
 		}
 
 		/* Convert ArrayList to array and return. */
-		String[] ret = new String[alerts.size()];
-		alerts.toArray(ret);
-		return ret;
+		String[] ret = new String[newAlerts.size()];
+		newAlerts.toArray(ret);
+		alerts = ret;
+		updating = false;
 	}
 	
 	/* Adapted from http://stackoverflow.com/questions/20744012/
 	 * recursively-list-all-files-in-eclipse-workspace-programmatically */
-	private ArrayList<AlertFile> processContainer(IContainer container)
+	private static ArrayList<AlertFile> processContainer(IContainer container)
 	{
 		ArrayList<AlertFile> files = new ArrayList<AlertFile>();
 		IResource[] members;
@@ -81,7 +95,7 @@ public class MetricManager {
 		return files;
 	}
 	
-	private AlertFile processFile(IFile file)
+	private static AlertFile processFile(IFile file)
 	{
 		InputStream is = null;
 		java.util.Scanner s = null;
@@ -105,7 +119,7 @@ public class MetricManager {
 		return aFile;
 	}
 	
-	private Integer getNumLines(String code) {
+	private static int getNumLines(String code) {
 		Matcher m = Pattern.compile("(\n)|(\r)|(\r\n)").matcher(code);
 		Integer lines = 1;
 		while (m.find()) {
@@ -114,11 +128,15 @@ public class MetricManager {
 		return lines;
 	}
 	
-	private String addAlert(IMetric metric, AlertFile code) {
+	private static String addAlert(IMetric metric, AlertFile code) {
 		String warning = metric.getAlert(code);
 		if (warning != null) {
 			return code.name + ": " + warning;
 		}
 		return null;
+	}
+	
+	public static Boolean isUpdating() {
+		return updating;
 	}
 }
