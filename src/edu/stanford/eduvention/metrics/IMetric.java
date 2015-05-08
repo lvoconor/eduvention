@@ -1,7 +1,8 @@
 package edu.stanford.eduvention.metrics;
 
 import edu.stanford.eduvention.AlertFile;
+import edu.stanford.eduvention.views.Alert;
 
 public interface IMetric {
-	String getAlert(AlertFile aFile);
+	Alert getAlert(AlertFile aFile);
 }

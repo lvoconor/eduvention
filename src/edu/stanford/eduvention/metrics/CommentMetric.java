@@ -4,6 +4,7 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 
 import edu.stanford.eduvention.AlertFile;
+import edu.stanford.eduvention.views.Alert;
 import parser.SourceCodeAnalytics;
 
 public class CommentMetric implements IMetric {
@@ -11,7 +12,17 @@ public class CommentMetric implements IMetric {
 	private static final Double COMMENT_FRAC = .10;
 	
 	@Override
-	public String getAlert(AlertFile aFile) {
+	public Alert getAlert(AlertFile aFile) {
+		String content = getContentString(aFile);
+		if(content == null){
+			return null;
+		}
+		Alert a = new Alert("comment", aFile.name, content);
+		return a;
+		
+	}
+	
+	private String getContentString(AlertFile aFile){
 		int numComments = getNumComments(aFile.contents);
 		if (numComments > -1 && numComments < COMMENT_FRAC * aFile.lines) {
 			return "Less than " + (COMMENT_FRAC * 100) + "% of lines in this file are comments.";

@@ -13,6 +13,7 @@ import org.eclipse.ui.*;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.SWT;
 
+import edu.stanford.eduvention.AlertFile;
 import edu.stanford.eduvention.DataManager;
 import edu.stanford.eduvention.metrics.*;
 
@@ -88,6 +89,7 @@ public class AlertsView extends ViewPart implements IResourceChangeListener {
 	public AlertsView() {
 		prefs = new PrefsView(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell());
 		ResourcesPlugin.getWorkspace().addResourceChangeListener(this, IResourceChangeEvent.POST_CHANGE);
+		MetricManager.init();
 	}
 
 	/**
@@ -172,7 +174,9 @@ public class AlertsView extends ViewPart implements IResourceChangeListener {
     			});
     			new Thread(new Runnable() {
     		    	public void run() {
-    	    			DataManager.update();
+    		    		for(AlertFile a: MetricManager.getAlertFiles()){
+    						DataManager.postSnapshot(a);
+    					}
     	    		}
     		    }).start();
 	    	}

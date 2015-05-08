@@ -14,33 +14,68 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 
 import edu.stanford.eduvention.AlertFile;
+import edu.stanford.eduvention.views.Alert;
 
 public class MetricManager {
+	private static ArrayList<AlertFile> alerts = new ArrayList<AlertFile>();
+	private static Boolean updating = true;
 	
-	private static String[] alerts = new String[]{"Alerts loading."};
-	private static Boolean updating = false;
+	public static void init() {
+		updating = false;
+	}
 	
+	public static void update() {
+		if (updating) return;
+		updating = true;
+		alerts = updateAlertFiles();
+		updating = false;
+	}
 	
+	public static Boolean isUpdating() {
+		return updating;
+	}
+	
+	/*
+	 * Returns a list of warning Strings 
+	 */
 	public static Object[] get() {
+		ArrayList<String> alertStrings = new ArrayList<String>();
+		
+		for (AlertFile file: alerts) {
+			for( Alert a: file.alerts){
+				alertStrings.add(a.getWarning());
+			}
+		}
+
+		/* Add note if there are no alerts */
+		if (alertStrings.size() == 0) {
+			alertStrings.add("No alerts!");
+		}
+
+		/* Convert ArrayList to array and return. */
+		String[] ret = new String[alertStrings.size()];
+		alertStrings.toArray(ret);
+		return ret;
+	}
+	
+	public static ArrayList<AlertFile> getAlertFiles() {
 		return alerts;
 	}
-
-	public static void update() {
-		if (updating) {
-			return;
-		}
-		updating = true;
+	
+	/*
+	 * Converts all the files in the workspace to AlertFile objects
+	 * TODO Add functionality to select only relevant projects in workspace
+	 */
+	private static ArrayList<AlertFile> updateAlertFiles(){
 		IProject[] projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
 		ArrayList<AlertFile> files = new ArrayList<AlertFile>();
 		for (IProject project: projects) {
 			files.addAll(processContainer(project));
 		}
-		
-		ArrayList<String> newAlerts = new ArrayList<String>();
-		String toAdd;
-		
-		for (AlertFile code: files) {
-			if (code != null && code.name != null && code.name.endsWith(".java")) {
+		//remove non-code files 
+		ArrayList<AlertFile> filteredFiles = filterNonCode(files);
+		Alert toAdd;		
+		for (AlertFile file: filteredFiles) {
 				/************************************************
 				 * 												*
 				 * 				ALERTS GO HERE					*
@@ -48,32 +83,23 @@ public class MetricManager {
 				 ************************************************/
 
 				/* Alert 1: check for 'e' */
-				toAdd = addAlert(new SimpleMetric(), code);
+				toAdd = new SimpleMetric().getAlert(file);
 				if (toAdd != null)
-					newAlerts.add(toAdd);
-				
+					file.alerts.add(toAdd);
+					
 				/* Alert 2: check comment ratio */
-				toAdd = addAlert(new CommentMetric(), code);
+				toAdd = new CommentMetric().getAlert(file);
 				if (toAdd != null)
-					newAlerts.add(toAdd);
+					file.alerts.add(toAdd);
 				
 				/* Alert 3: check average method size */
-				toAdd = addAlert(new DecompMetric(), code);
+				toAdd = new DecompMetric().getAlert(file);
 				if (toAdd != null)
-					newAlerts.add(toAdd);
-			}
+					file.alerts.add(toAdd);
+				
 		}
+		return filteredFiles;
 
-		/* Add note if there are no alerts */
-		if (newAlerts.size() == 0) {
-			newAlerts.add("No alerts!");
-		}
-
-		/* Convert ArrayList to array and return. */
-		String[] ret = new String[newAlerts.size()];
-		newAlerts.toArray(ret);
-		alerts = ret;
-		updating = false;
 	}
 	
 	/* Adapted from http://stackoverflow.com/questions/20744012/
@@ -94,7 +120,10 @@ public class MetricManager {
 		}
 		return files;
 	}
-	
+
+	/*
+	 * Converts an IFile into an AlertFile
+	 */
 	private static AlertFile processFile(IFile file)
 	{
 		InputStream is = null;
@@ -128,15 +157,16 @@ public class MetricManager {
 		return lines;
 	}
 	
-	private static String addAlert(IMetric metric, AlertFile code) {
-		String warning = metric.getAlert(code);
-		if (warning != null) {
-			return code.name + ": " + warning;
+	/*
+	 * Removes files that don't end with ".java"
+	 */
+	private static ArrayList<AlertFile> filterNonCode(ArrayList<AlertFile> files){
+		ArrayList<AlertFile> filtered = new ArrayList<AlertFile>();
+		for(AlertFile f: files){
+			if(f != null && f.name != null && f.name.endsWith(".java")){
+				filtered.add(f); 
+			}
 		}
-		return null;
-	}
-	
-	public static Boolean isUpdating() {
-		return updating;
+		return filtered;
 	}
 }
