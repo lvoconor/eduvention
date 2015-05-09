@@ -5,8 +5,11 @@ import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
+import javax.json.Json;
+import javax.json.JsonArray;
+import javax.json.JsonArrayBuilder;
+import javax.json.JsonBuilderFactory;
+import javax.json.JsonObject;
 
 import org.apache.http.*;
 import org.apache.http.client.ClientProtocolException;
@@ -55,6 +58,7 @@ public class DataManager {
 	}
 	
 	public static void postSnapshot(AlertFile f){
+		loadSettings();
 		String snapshotString = "request=" + generateJSONString(f);
 		HttpPost request = new HttpPost("http://eduvention-website.herokuapp.com/snapshots/create");
 		StringEntity params = null;
@@ -80,35 +84,36 @@ public class DataManager {
 	}
 
 	private static String generateJSONString(AlertFile f){
-		loadSettings();
-		JSONObject j = new JSONObject();
-		JSONArray alerts = new JSONArray();
-		j.put("assignment_id", 6); //TODO store assignment_id
-		j.put("student_id", sunet);
-		j.put("snapshot", f.contents);
-		j.put("datetime", new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
+		JsonBuilderFactory factory = Json.createBuilderFactory(null);
+		JsonArrayBuilder alertBuilder = factory.createArrayBuilder();
 		for(Alert alert: f.alerts){
-			JSONObject alertObject = new JSONObject();
-			alertObject.put("alert_type", alert.type);
+			alertBuilder.add(factory.createObjectBuilder().add("alert_type", alert.type));
 			//TODO add line numbers
-			alerts.add(alertObject); 
 		}
-		j.put("alerts", alerts);
+		JsonArray alerts = alertBuilder.build();
+
+		JsonObject j = factory.createObjectBuilder()
+			.add("assignment_id", 6) //TODO store assignment_id
+			.add("student_id", sunet)
+			.add("snapshot", f.contents)
+			.add("datetime", new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()))
+			.add("alerts", alerts)
+			.build();
 		//TODO add filename
+		
 		return j.toString();
 	}
 
-	public static String generateJSONString(int studentId, int assignmentId, String snapshot, int alert, String datetime, String alertType){
-		JSONObject j = new JSONObject();
-		j.put("assignment_id", assignmentId);
-		j.put("student_id", studentId);
-		j.put("snapshot", snapshot);
-		j.put("alert", alert);
-		j.put("datetime", datetime);
-		j.put("alert_type", alertType);
-		
-		JSONArray a = new JSONArray();
-		//a.add()
+	public static String generateJSONString(int studentId, int assignmentId, String snapshot, int alert, String datetime, String alertType) {
+		JsonBuilderFactory factory = Json.createBuilderFactory(null);
+		JsonObject j = factory.createObjectBuilder()
+				.add("assignment_id", assignmentId)
+				.add("student_id", studentId)
+				.add("snapshot", snapshot)
+				.add("datetime", datetime)
+				.add("alerts", alertType)
+				.build();
+
 		return j.toString();
 	}
 	

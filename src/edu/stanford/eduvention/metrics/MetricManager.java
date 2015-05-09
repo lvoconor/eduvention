@@ -18,21 +18,9 @@ import edu.stanford.eduvention.views.Alert;
 
 public class MetricManager {
 	private static ArrayList<AlertFile> alerts = new ArrayList<AlertFile>();
-	private static Boolean updating = true;
-	
-	public static void init() {
-		updating = false;
-	}
 	
 	public static void update() {
-		if (updating) return;
-		updating = true;
 		alerts = updateAlertFiles();
-		updating = false;
-	}
-	
-	public static Boolean isUpdating() {
-		return updating;
 	}
 	
 	/*

@@ -45,6 +45,7 @@ public class AlertsView extends ViewPart implements IResourceChangeListener {
 	private TableViewer viewer;
 	private Action openPrefs;
 	private PrefsView prefs;
+	private Boolean updating;
 
 	/*
 	 * The content provider class is responsible for
@@ -62,9 +63,6 @@ public class AlertsView extends ViewPart implements IResourceChangeListener {
 		public void dispose() {
 		}
 		public Object[] getElements(Object parent) {
-			if (MetricManager.isUpdating()) {
-				return new String[] {"Updating alerts."};
-			}
 			return MetricManager.get();
 		}
 	}
@@ -88,8 +86,8 @@ public class AlertsView extends ViewPart implements IResourceChangeListener {
 	 */
 	public AlertsView() {
 		prefs = new PrefsView(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell());
+		updating = false;
 		ResourcesPlugin.getWorkspace().addResourceChangeListener(this, IResourceChangeEvent.POST_CHANGE);
-		MetricManager.init();
 	}
 
 	/**
@@ -164,6 +162,8 @@ public class AlertsView extends ViewPart implements IResourceChangeListener {
 	
 	@Override
 	public void resourceChanged(IResourceChangeEvent event) {
+		if (updating) return;
+		updating = true;
 		new Thread(new Runnable() {
 	    	public void run() {
     			MetricManager.update();
@@ -181,5 +181,6 @@ public class AlertsView extends ViewPart implements IResourceChangeListener {
     		    }).start();
 	    	}
 	    }).start();
+		updating = false;
 	}
 }
