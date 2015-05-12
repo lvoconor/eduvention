@@ -110,6 +110,7 @@ public class DataManager {
 			.add("snapshot", contents)
 			.add("datetime", new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()))
 			.add("alerts", alerts)
+			.add("filename", f.name)
 			.build();
 		//TODO add filename
 		
