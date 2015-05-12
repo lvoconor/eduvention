@@ -1,5 +1,7 @@
 package edu.stanford.eduvention.views;
 
+import java.util.ArrayList;
+
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.part.*;
@@ -41,6 +43,8 @@ public class AlertsView extends ViewPart implements IResourceChangeListener {
 	 * The ID of the view as specified by the extension.
 	 */
 	public static final String ID = "edu.stanford.eduvention.views.AlertsView";
+	
+	public static final int MIN_NETWORK_INTERVAL = 1;
 	
 	private TableViewer viewer;
 	private Action openPrefs;
@@ -164,8 +168,6 @@ public class AlertsView extends ViewPart implements IResourceChangeListener {
 	
 	@Override
 	public void resourceChanged(IResourceChangeEvent event) {
-		if (updating) return;
-		updating = true;
 		new Thread(new Runnable() {
 	    	public void run() {
     			MetricManager.update();
@@ -176,13 +178,14 @@ public class AlertsView extends ViewPart implements IResourceChangeListener {
     			});
     			new Thread(new Runnable() {
     		    	public void run() {
-    		    		for(AlertFile a: MetricManager.getAlertFiles()){
+    		    		if (dataManager.getLastUpdate() > (System.currentTimeMillis() / 1000L) - MIN_NETWORK_INTERVAL)
+    		    			return;
+    		    		for(AlertFile a: MetricManager.getAlertFiles()) {
     						dataManager.postSnapshot(a);
     					}
     	    		}
     		    }).start();
 	    	}
 	    }).start();
-		updating = false;
 	}
 }

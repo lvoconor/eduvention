@@ -16,6 +16,6 @@ public class AlertFile {
 	}
 	
 	public String toString() {
-		return String.format("{name: %s, lines: %d, alerts: %s", name, lines, alerts.toString());
+		return String.format("{name: %s, lines: %d, alerts: %s}", name, lines, alerts.toString());
 	}
 }

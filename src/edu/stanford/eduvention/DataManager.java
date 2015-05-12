@@ -26,11 +26,26 @@ import edu.stanford.eduvention.views.Alert;
 @SuppressWarnings("restriction")
 public class DataManager {
 
-	private IEclipsePreferences prefs = InstanceScope.INSTANCE.getNode("edu.stanford.eduvention");
+	private IEclipsePreferences prefs;
 	private String name;
 	private String sunet;
-	private HttpClient httpClient = HttpClientBuilder.create().build();;
+	private HttpClient httpClient;
+	private long lastUpdate;
+	
+	public DataManager() {
+		prefs = InstanceScope.INSTANCE.getNode("edu.stanford.eduvention");
+		httpClient = HttpClientBuilder.create().build();
+		lastUpdate = System.currentTimeMillis() / 1000L;
+	}
 
+	public long getLastUpdate() {
+		return lastUpdate;
+	}
+	
+	public void setLastUpdate(long t) {
+		lastUpdate = t;
+	}
+	
 	public void update() {
 		loadSettings();
 	    try {
