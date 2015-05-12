@@ -57,7 +57,7 @@ public class DataManager {
 	    }
 	}
 	
-	public void postSnapshot(AlertFile f){
+	public void postSnapshot(AlertFile f) {
 		loadSettings();
 		String snapshotString = "request=" + generateJSONString(f);
 		HttpPost request = new HttpPost("http://eduvention-website.herokuapp.com/snapshots/create");
