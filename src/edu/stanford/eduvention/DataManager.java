@@ -2,6 +2,7 @@ package edu.stanford.eduvention;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
@@ -49,7 +50,9 @@ public class DataManager {
 	public void postSnapshot(AlertFile f) {
 		loadSettings();
 		// Generate POST request body
-		String snapshotString = "request=" + generateJSONString(f);
+		String json = generateJSONString(f);
+		if (json == null) return;
+		String snapshotString = "request=" + json;
 		byte[] postData = snapshotString.getBytes(Charset.forName("UTF-8"));
 		int postDataLength = postData.length;
 		URL url;
@@ -100,8 +103,13 @@ public class DataManager {
 			alertBuilder.add(factory.createObjectBuilder().add("alert_type", alert.type).add("line_number", alert.lineNumber));
 		}
 		JsonArray alerts = alertBuilder.build();
-
-		String contents = DatatypeConverter.printBase64Binary(f.contents.getBytes());
+		String contents;
+		try {
+			contents = DatatypeConverter.printBase64Binary(f.contents.getBytes("UTF-8"));
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+			return null;
+		}
 		
 		JsonObject j = factory.createObjectBuilder()
 			.add("assignment_id", 6) //TODO store assignment_id
