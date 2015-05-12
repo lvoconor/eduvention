@@ -1,7 +1,5 @@
 package edu.stanford.eduvention.views;
 
-import java.util.ArrayList;
-
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.part.*;
@@ -49,7 +47,6 @@ public class AlertsView extends ViewPart implements IResourceChangeListener {
 	private TableViewer viewer;
 	private Action openPrefs;
 	private PrefsView prefs;
-	private Boolean updating;
 	private DataManager dataManager;
 
 	/*

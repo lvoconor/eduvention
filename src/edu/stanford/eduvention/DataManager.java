@@ -31,7 +31,7 @@ public class DataManager {
 	private String sunet;
 	private HttpClient httpClient;
 	private long lastUpdate;
-	
+
 	public DataManager() {
 		prefs = InstanceScope.INSTANCE.getNode("edu.stanford.eduvention");
 		httpClient = HttpClientBuilder.create().build();
@@ -41,37 +41,11 @@ public class DataManager {
 	public long getLastUpdate() {
 		return lastUpdate;
 	}
-	
+
 	public void setLastUpdate(long t) {
 		lastUpdate = t;
 	}
-	
-	public void update() {
-		loadSettings();
-	    try {
-	        HttpPost request = new HttpPost("http://eduvention-website.herokuapp.com/snapshots/create");
-	        String jsonString = "request="
-	     		+ "{\"assignment_id\":\"6\", "
-	     		+ "\"student_id\":\""
-	     		+ sunet
-	     		+ "\","
-	     		+ "\"snapshot\": \"class Karel\","
-	     		+ "\"alert\": \"1\","
-	     		+ "\"datetime\": \""
-	     		+ new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date())
-	     		+ "\"}";
-	     
-	        StringEntity params = new StringEntity(jsonString);
-	        request.addHeader("content-type", "application/x-www-form-urlencoded");
-	        request.setEntity(params);
-	        HttpResponse response = httpClient.execute(request);
-	        System.out.println(response.getStatusLine().toString());
-	        // handle response here...
-	    }catch (Exception ex) {
-	        // handle exception here
-	    }
-	}
-	
+
 	public void postSnapshot(AlertFile f) {
 		loadSettings();
 		String snapshotString = "request=" + generateJSONString(f);
@@ -119,19 +93,6 @@ public class DataManager {
 		return j.toString();
 	}
 
-	public String generateJSONString(int studentId, int assignmentId, String snapshot, int alert, String datetime, String alertType) {
-		JsonBuilderFactory factory = Json.createBuilderFactory(null);
-		JsonObject j = factory.createObjectBuilder()
-				.add("assignment_id", assignmentId)
-				.add("student_id", studentId)
-				.add("snapshot", snapshot)
-				.add("datetime", datetime)
-				.add("alerts", alertType)
-				.build();
-
-		return j.toString();
-	}
-	
 	private void loadSettings() {
 		  try {
 			prefs.sync();
