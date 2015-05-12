@@ -176,6 +176,7 @@ public class AlertsView extends ViewPart implements IResourceChangeListener {
     		    	public void run() {
     		    		if (dataManager.getLastUpdate() > (System.currentTimeMillis() / 1000L) - MIN_NETWORK_INTERVAL)
     		    			return;
+    		    		dataManager.setLastUpdate(System.currentTimeMillis() / 1000L);
     		    		for(AlertFile a: MetricManager.getAlertFiles()) {
     						dataManager.postSnapshot(a);
     					}
