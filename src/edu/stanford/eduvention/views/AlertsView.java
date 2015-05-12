@@ -42,7 +42,7 @@ public class AlertsView extends ViewPart implements IResourceChangeListener {
 	 */
 	public static final String ID = "edu.stanford.eduvention.views.AlertsView";
 	
-	public static final int MIN_NETWORK_INTERVAL = 1;
+	public static final int MIN_NETWORK_INTERVAL = 1000;
 	
 	private TableViewer viewer;
 	private Action openPrefs;
@@ -174,9 +174,9 @@ public class AlertsView extends ViewPart implements IResourceChangeListener {
     			});
     			new Thread(new Runnable() {
     		    	public void run() {
-    		    		if (dataManager.getLastUpdate() > (System.currentTimeMillis() / 1000L) - MIN_NETWORK_INTERVAL)
+    		    		if (dataManager.getLastUpdate() > (System.currentTimeMillis()) - MIN_NETWORK_INTERVAL)
     		    			return;
-    		    		dataManager.setLastUpdate(System.currentTimeMillis() / 1000L);
+    		    		dataManager.setLastUpdate(System.currentTimeMillis());
     		    		for(AlertFile a: MetricManager.getAlertFiles()) {
     						dataManager.postSnapshot(a);
     					}
