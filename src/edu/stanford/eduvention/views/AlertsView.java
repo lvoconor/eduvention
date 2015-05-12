@@ -42,7 +42,7 @@ public class AlertsView extends ViewPart implements IResourceChangeListener {
 	 */
 	public static final String ID = "edu.stanford.eduvention.views.AlertsView";
 	
-	public static final int MIN_NETWORK_INTERVAL = 1000;
+	public static final int MIN_NETWORK_INTERVAL = 2000;
 	
 	private TableViewer viewer;
 	private Action openPrefs;
