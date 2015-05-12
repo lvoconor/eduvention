@@ -15,6 +15,7 @@ import javax.json.JsonArray;
 import javax.json.JsonArrayBuilder;
 import javax.json.JsonBuilderFactory;
 import javax.json.JsonObject;
+import javax.xml.bind.DatatypeConverter;
 
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.InstanceScope;
@@ -31,7 +32,7 @@ public class DataManager {
 
 	public DataManager() {
 		prefs = InstanceScope.INSTANCE.getNode("edu.stanford.eduvention");
-		lastUpdate = System.currentTimeMillis() / 1000L;
+		lastUpdate = 0;
 	}
 
 	public long getLastUpdate() {
@@ -101,10 +102,12 @@ public class DataManager {
 		}
 		JsonArray alerts = alertBuilder.build();
 
+		String contents = DatatypeConverter.printBase64Binary(f.contents.getBytes());
+		
 		JsonObject j = factory.createObjectBuilder()
 			.add("assignment_id", 6) //TODO store assignment_id
 			.add("student_id", sunet)
-			.add("snapshot", f.contents)
+			.add("snapshot", contents)
 			.add("datetime", new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()))
 			.add("alerts", alerts)
 			.build();
