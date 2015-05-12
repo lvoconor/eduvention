@@ -46,6 +46,7 @@ public class AlertsView extends ViewPart implements IResourceChangeListener {
 	private Action openPrefs;
 	private PrefsView prefs;
 	private Boolean updating;
+	private DataManager dataManager;
 
 	/*
 	 * The content provider class is responsible for
@@ -86,6 +87,7 @@ public class AlertsView extends ViewPart implements IResourceChangeListener {
 	 */
 	public AlertsView() {
 		prefs = new PrefsView(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell());
+		dataManager = new DataManager();
 		updating = false;
 		ResourcesPlugin.getWorkspace().addResourceChangeListener(this, IResourceChangeEvent.POST_CHANGE);
 	}
@@ -175,7 +177,7 @@ public class AlertsView extends ViewPart implements IResourceChangeListener {
     			new Thread(new Runnable() {
     		    	public void run() {
     		    		for(AlertFile a: MetricManager.getAlertFiles()){
-    						DataManager.postSnapshot(a);
+    						dataManager.postSnapshot(a);
     					}
     	    		}
     		    }).start();

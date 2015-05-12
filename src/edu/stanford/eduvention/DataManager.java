@@ -26,12 +26,12 @@ import edu.stanford.eduvention.views.Alert;
 @SuppressWarnings("restriction")
 public class DataManager {
 
-	private static IEclipsePreferences prefs = InstanceScope.INSTANCE.getNode("edu.stanford.eduvention");
-	private static String name;
-	private static String sunet;
-	private static HttpClient httpClient = HttpClientBuilder.create().build();;
+	private IEclipsePreferences prefs = InstanceScope.INSTANCE.getNode("edu.stanford.eduvention");
+	private String name;
+	private String sunet;
+	private HttpClient httpClient = HttpClientBuilder.create().build();;
 
-	public static void update() {
+	public void update() {
 		loadSettings();
 	    try {
 	        HttpPost request = new HttpPost("http://eduvention-website.herokuapp.com/snapshots/create");
@@ -57,7 +57,7 @@ public class DataManager {
 	    }
 	}
 	
-	public static void postSnapshot(AlertFile f){
+	public void postSnapshot(AlertFile f){
 		loadSettings();
 		String snapshotString = "request=" + generateJSONString(f);
 		HttpPost request = new HttpPost("http://eduvention-website.herokuapp.com/snapshots/create");
@@ -83,7 +83,7 @@ public class DataManager {
         System.out.println(response.getStatusLine().toString());
 	}
 
-	private static String generateJSONString(AlertFile f){
+	private String generateJSONString(AlertFile f){
 		JsonBuilderFactory factory = Json.createBuilderFactory(null);
 		JsonArrayBuilder alertBuilder = factory.createArrayBuilder();
 		for(Alert alert: f.alerts){
@@ -104,7 +104,7 @@ public class DataManager {
 		return j.toString();
 	}
 
-	public static String generateJSONString(int studentId, int assignmentId, String snapshot, int alert, String datetime, String alertType) {
+	public String generateJSONString(int studentId, int assignmentId, String snapshot, int alert, String datetime, String alertType) {
 		JsonBuilderFactory factory = Json.createBuilderFactory(null);
 		JsonObject j = factory.createObjectBuilder()
 				.add("assignment_id", assignmentId)
@@ -117,7 +117,7 @@ public class DataManager {
 		return j.toString();
 	}
 	
-	private static void loadSettings() {
+	private void loadSettings() {
 		  try {
 			prefs.sync();
 		  } catch (BackingStoreException e) {
@@ -125,5 +125,4 @@ public class DataManager {
 		  sunet = prefs.get("sunet", "unknown");
 		  name= prefs.get("name", "unknown");
 	}
-
 }
