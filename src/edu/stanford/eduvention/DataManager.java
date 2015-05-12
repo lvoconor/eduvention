@@ -85,7 +85,7 @@ public class DataManager {
 			wr.close();
 		} catch (Exception e) {
 		}
-		
+
         try {
 			System.out.println(cox.getResponseCode());
 		} catch (IOException e) {
@@ -97,8 +97,7 @@ public class DataManager {
 		JsonBuilderFactory factory = Json.createBuilderFactory(null);
 		JsonArrayBuilder alertBuilder = factory.createArrayBuilder();
 		for(Alert alert: f.alerts){
-			alertBuilder.add(factory.createObjectBuilder().add("alert_type", alert.type));
-			//TODO add line numbers
+			alertBuilder.add(factory.createObjectBuilder().add("alert_type", alert.type).add("line_number", alert.lineNumber));
 		}
 		JsonArray alerts = alertBuilder.build();
 
