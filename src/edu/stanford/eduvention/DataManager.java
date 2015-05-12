@@ -1,7 +1,12 @@
 package edu.stanford.eduvention;
 
+import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.ProtocolException;
+import java.net.URL;
+import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -11,30 +16,21 @@ import javax.json.JsonArrayBuilder;
 import javax.json.JsonBuilderFactory;
 import javax.json.JsonObject;
 
-import org.apache.http.*;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.HttpClientBuilder;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.osgi.service.prefs.BackingStoreException;
 
 import edu.stanford.eduvention.views.Alert;
 
-@SuppressWarnings("restriction")
 public class DataManager {
 
 	private IEclipsePreferences prefs;
 	private String name;
 	private String sunet;
-	private HttpClient httpClient;
 	private long lastUpdate;
 
 	public DataManager() {
 		prefs = InstanceScope.INSTANCE.getNode("edu.stanford.eduvention");
-		httpClient = HttpClientBuilder.create().build();
 		lastUpdate = System.currentTimeMillis() / 1000L;
 	}
 
@@ -46,30 +42,54 @@ public class DataManager {
 		lastUpdate = t;
 	}
 
+	/* Sources:
+	 * http://stackoverflow.com/questions/4205980/java-sending-http-parameters-via-post-method-easily
+	 */
 	public void postSnapshot(AlertFile f) {
 		loadSettings();
+		// Generate POST request body
 		String snapshotString = "request=" + generateJSONString(f);
-		HttpPost request = new HttpPost("http://eduvention-website.herokuapp.com/snapshots/create");
-		StringEntity params = null;
+		byte[] postData = snapshotString.getBytes(Charset.forName("UTF-8"));
+		int postDataLength = postData.length;
+		URL url;
 		try {
-			params = new StringEntity(snapshotString);
-		} catch (UnsupportedEncodingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			url = new URL("http://eduvention-website.herokuapp.com/snapshots/create");
+		} catch (MalformedURLException e2) {
+			e2.printStackTrace();
+			return;
 		}
-        request.addHeader("content-type", "application/x-www-form-urlencoded");
-        request.setEntity(params);
-        HttpResponse response = null;
+		HttpURLConnection cox;
 		try {
-			response = httpClient.execute(request);
-		} catch (ClientProtocolException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			cox = (HttpURLConnection) url.openConnection();
+		} catch (IOException e2) {
+			e2.printStackTrace();
+			return;
+		}           
+		cox.setDoOutput(true);
+		cox.setDoInput (true);
+		cox.setInstanceFollowRedirects( false );
+		try {
+			cox.setRequestMethod("POST");
+		} catch (ProtocolException e1) {
+			e1.printStackTrace();
+			return;
+		}
+		cox.setRequestProperty("Content-Type", "application/x-www-form-urlencoded"); 
+		cox.setRequestProperty("charset", "utf-8");
+		cox.setRequestProperty("Content-Length", Integer.toString(postDataLength));
+		cox.setUseCaches(false);
+		try {
+			DataOutputStream wr = new DataOutputStream(cox.getOutputStream());
+			wr.write(postData);
+			wr.close();
+		} catch (Exception e) {
+		}
+		
+        try {
+			System.out.println(cox.getResponseCode());
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-        System.out.println(response.getStatusLine().toString());
 	}
 
 	private String generateJSONString(AlertFile f){

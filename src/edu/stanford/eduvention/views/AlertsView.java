@@ -89,7 +89,6 @@ public class AlertsView extends ViewPart implements IResourceChangeListener {
 	public AlertsView() {
 		prefs = new PrefsView(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell());
 		dataManager = new DataManager();
-		updating = false;
 		ResourcesPlugin.getWorkspace().addResourceChangeListener(this, IResourceChangeEvent.POST_CHANGE);
 	}
 
