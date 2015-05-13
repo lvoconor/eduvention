@@ -7,7 +7,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
-import java.nio.charset.Charset;
+import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -30,6 +30,8 @@ public class DataManager {
 	private String name;
 	private String sunet;
 	private long lastUpdate;
+	
+	private static final String ENCODING = "US-ASCII";
 
 	public DataManager() {
 		prefs = InstanceScope.INSTANCE.getNode("edu.stanford.eduvention");
@@ -53,7 +55,13 @@ public class DataManager {
 		String json = generateJSONString(f);
 		if (json == null) return;
 		String snapshotString = "request=" + json;
-		byte[] postData = snapshotString.getBytes(Charset.forName("UTF-8"));
+		byte[] postData;
+		try {
+			postData = snapshotString.getBytes(ENCODING);
+		} catch (UnsupportedEncodingException e3) {
+			e3.printStackTrace();
+			return;
+		}
 		int postDataLength = postData.length;
 		URL url;
 		try {
@@ -105,8 +113,9 @@ public class DataManager {
 		JsonArray alerts = alertBuilder.build();
 		String contents;
 		try {
-			contents = DatatypeConverter.printBase64Binary(f.contents.getBytes("UTF-8"));
-			System.out.println(contents);
+
+			String raw_contents = DatatypeConverter.printBase64Binary(f.contents.getBytes(ENCODING));
+			contents = URLEncoder.encode(raw_contents, ENCODING);
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
 			return null;
@@ -120,8 +129,7 @@ public class DataManager {
 			.add("alerts", alerts)
 			.add("filename", f.name)
 			.build();
-		//TODO add filename
-		
+
 		return j.toString();
 	}
 
