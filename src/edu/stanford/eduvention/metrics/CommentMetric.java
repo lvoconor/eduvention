@@ -2,6 +2,7 @@ package edu.stanford.eduvention.metrics;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.util.ArrayList;
 
 import edu.stanford.eduvention.AlertFile;
 import edu.stanford.eduvention.views.Alert;
@@ -12,14 +13,15 @@ public class CommentMetric implements IMetric {
 	private static final Double COMMENT_FRAC = .10;
 	
 	@Override
-	public Alert getAlert(AlertFile aFile) {
+	public ArrayList<Alert> getAlerts(AlertFile aFile) {
+		ArrayList<Alert> alerts = new ArrayList<Alert>();
 		String content = getContentString(aFile);
 		if(content == null){
 			return null;
 		}
 		Alert a = new Alert("comment", aFile.name, content);
-		return a;
-		
+		alerts.add(a);
+		return alerts;
 	}
 	
 	private String getContentString(AlertFile aFile){

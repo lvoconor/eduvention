@@ -62,7 +62,7 @@ public class MetricManager {
 		}
 		//remove non-code files 
 		ArrayList<AlertFile> filteredFiles = filterNonCode(files);
-		Alert toAdd;		
+		ArrayList<Alert> toAdd;		
 		for (AlertFile file: filteredFiles) {
 				/************************************************
 				 * 												*
@@ -71,19 +71,26 @@ public class MetricManager {
 				 ************************************************/
 
 				/* Alert 1: check for 'e' */
-				toAdd = new SimpleMetric().getAlert(file);
+				toAdd = new SimpleMetric().getAlerts(file);
 				if (toAdd != null)
-					file.alerts.add(toAdd);
+					file.alerts.addAll(toAdd);
 					
 				/* Alert 2: check comment ratio */
-				toAdd = new CommentMetric().getAlert(file);
+				toAdd = new CommentMetric().getAlerts(file);
 				if (toAdd != null)
-					file.alerts.add(toAdd);
+					file.alerts.addAll(toAdd);
 				
 				/* Alert 3: check average method size */
-				toAdd = new DecompMetric().getAlert(file);
+				toAdd = new DecompMetric().getAlerts(file);
 				if (toAdd != null)
-					file.alerts.add(toAdd);
+					file.alerts.addAll(toAdd);
+				
+				/* Alert 4: find methods that are too long */
+				toAdd = new MultilineDecompMetric().getAlerts(file);
+				if (toAdd != null)
+					file.alerts.addAll(toAdd);
+				
+				
 				
 		}
 		return filteredFiles;

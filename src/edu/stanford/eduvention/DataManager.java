@@ -106,6 +106,7 @@ public class DataManager {
 		String contents;
 		try {
 			contents = DatatypeConverter.printBase64Binary(f.contents.getBytes("UTF-8"));
+			System.out.println(contents);
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
 			return null;
