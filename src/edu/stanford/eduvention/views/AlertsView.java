@@ -178,7 +178,9 @@ public class AlertsView extends ViewPart implements IResourceChangeListener {
     		    			return;
     		    		dataManager.setLastUpdate(System.currentTimeMillis());
     		    		for(AlertFile a: MetricManager.getAlertFiles()) {
-    						dataManager.postSnapshot(a);
+    		    			if(a.isValid){
+    		    				dataManager.postSnapshot(a);
+    		    			}
     					}
     	    		}
     		    }).start();

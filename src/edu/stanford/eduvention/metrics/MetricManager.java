@@ -30,6 +30,10 @@ public class MetricManager {
 		ArrayList<String> alertStrings = new ArrayList<String>();
 		
 		for (AlertFile file: alerts) {
+			if(!file.isValid){
+				alertStrings.add("file " + file.name + " does not compile. Please fix syntax errors");
+				continue;
+			}
 			for( Alert a: file.alerts){
 				alertStrings.add(a.getWarning());
 			}
@@ -69,6 +73,9 @@ public class MetricManager {
 				 * 				ALERTS GO HERE					*
 				 * 												*
 				 ************************************************/
+				if(!file.isValid){
+					continue;	
+				}
 
 				/* Alert 1: check for 'e' */
 				toAdd = new SimpleMetric().getAlerts(file);
@@ -89,9 +96,7 @@ public class MetricManager {
 				toAdd = new MultilineDecompMetric().getAlerts(file);
 				if (toAdd != null)
 					file.alerts.addAll(toAdd);
-				
-				
-				
+					
 		}
 		return filteredFiles;
 
@@ -108,8 +113,12 @@ public class MetricManager {
 			for (IResource member: members) {
 				if (member instanceof IContainer)
 					files.addAll(processContainer((IContainer)member));
-				else if (member instanceof IFile)
-					files.add(processFile((IFile)member));
+				else if (member instanceof IFile){
+					AlertFile f = processFile((IFile)member);
+					if(f != null){
+						files.add(f);
+					}
+				}
 			}
 		} catch (CoreException e) {
 		}
@@ -135,22 +144,18 @@ public class MetricManager {
 		s = new Scanner(is);
 		s.useDelimiter("\\A");
 	    String contents = s.hasNext() ? s.next() : "";
-		AlertFile aFile = new AlertFile();
-		aFile.name = file.getName();
-		aFile.contents = contents;
-		aFile.lines = getNumLines(contents);
+	    String fileName = file.getName();
+		//filter out non-java files
+	    if(!fileName.contains(".java")){
+			return null;
+		}
+		AlertFile aFile = new AlertFile(fileName, contents);
 		s.close();
+		
 		return aFile;
 	}
 	
-	private static int getNumLines(String code) {
-		Matcher m = Pattern.compile("(\n)|(\r)|(\r\n)").matcher(code);
-		Integer lines = 1;
-		while (m.find()) {
-		    lines ++;
-		}
-		return lines;
-	}
+	
 	
 	/*
 	 * Removes files that don't end with ".java"
