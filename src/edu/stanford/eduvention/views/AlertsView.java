@@ -47,6 +47,8 @@ public class AlertsView extends ViewPart implements IResourceChangeListener {
 	private TableViewer viewer;
 	private Action openPrefs;
 	private PrefsView prefs;
+	private Action openQuestion;
+	private QuestionView question;
 	private DataManager dataManager;
 
 	/*
@@ -88,6 +90,7 @@ public class AlertsView extends ViewPart implements IResourceChangeListener {
 	 */
 	public AlertsView() {
 		prefs = new PrefsView(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell());
+		question = new QuestionView(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell());
 		dataManager = new DataManager();
 		ResourcesPlugin.getWorkspace().addResourceChangeListener(this, IResourceChangeEvent.POST_CHANGE);
 	}
@@ -131,16 +134,19 @@ public class AlertsView extends ViewPart implements IResourceChangeListener {
 
 	private void fillLocalPullDown(IMenuManager manager) {
 		manager.add(openPrefs);
+		manager.add(openQuestion);
 	}
 
 	private void fillContextMenu(IMenuManager manager) {
 		manager.add(openPrefs);
+		manager.add(openQuestion);
 		// Other plug-ins can contribute there actions here
 		manager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 	}
 	
 	private void fillLocalToolBar(IToolBarManager manager) {
 		manager.add(openPrefs);
+		manager.add(openQuestion);
 	}
 
 	private void makeActions() {
@@ -153,6 +159,15 @@ public class AlertsView extends ViewPart implements IResourceChangeListener {
 		openPrefs.setToolTipText("Open preferences");
 		openPrefs.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().
 			getImageDescriptor(ISharedImages.IMG_OBJS_INFO_TSK));
+		openQuestion = new Action() {
+			public void run() {
+				question.open();
+			}
+		};
+		openQuestion.setText("Ask a Question");
+		openQuestion.setToolTipText("Ask a Question");
+		openQuestion.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().
+			getImageDescriptor(ISharedImages.IMG_LCL_LINKTO_HELP));
 	}
 
 	/**
