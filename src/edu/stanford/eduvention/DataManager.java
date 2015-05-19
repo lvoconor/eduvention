@@ -180,7 +180,7 @@ public class DataManager {
 		URL url;
 		try {
 			url = new URL(
-					"http://eduvention-website.herokuapp.com/instructor/help");
+					"http://eduvention-website.herokuapp.com/question/create");
 		} catch (MalformedURLException e2) {
 			e2.printStackTrace();
 			return;
