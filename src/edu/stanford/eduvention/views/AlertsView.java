@@ -187,7 +187,7 @@ public class AlertsView extends ViewPart implements IResourceChangeListener {
 	
 	private void updateMarkers() {
 		try {
-			ResourcesPlugin.getWorkspace().getRoot().deleteMarkers(IMarker.PROBLEM, true, IResource.DEPTH_INFINITE);
+			ResourcesPlugin.getWorkspace().getRoot().deleteMarkers("edu.stanford.eduvention.marker", true, IResource.DEPTH_INFINITE);
 		} catch (CoreException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
@@ -198,8 +198,9 @@ public class AlertsView extends ViewPart implements IResourceChangeListener {
 					if (alert.lineNumber > 0) {
 						HashMap map = new HashMap();
 					   	MarkerUtilities.setLineNumber(map, alert.lineNumber);
+					   	MarkerUtilities.setMessage(map, alert.getWarning());
 					   	try {
-						   MarkerUtilities.createMarker(aFile.file, map, IMarker.PROBLEM);
+						   MarkerUtilities.createMarker(aFile.file, map, "edu.stanford.eduvention.marker");
 						} catch (CoreException e) {
 							e.printStackTrace();
 							System.out.println("Failed to add marker.");

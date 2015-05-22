@@ -77,22 +77,12 @@ public class MetricManager {
 					continue;	
 				}
 
-				/* Alert 1: check for 'e' */
-				toAdd = new SimpleMetric().getAlerts(file);
-				if (toAdd != null)
-					file.alerts.addAll(toAdd);
-
-				/* Alert 2: check comment ratio */
+				/* Alert 1: check comment ratio */
 				toAdd = new CommentMetric().getAlerts(file);
 				if (toAdd != null)
 					file.alerts.addAll(toAdd);
-				
-				/* Alert 3: check average method size */
-				toAdd = new DecompMetric().getAlerts(file);
-				if (toAdd != null)
-					file.alerts.addAll(toAdd);
-				
-				/* Alert 4: find methods that are too long */
+
+				/* Alert 2: find methods that are too long */
 				toAdd = new MultilineDecompMetric().getAlerts(file);
 				if (toAdd != null)
 					file.alerts.addAll(toAdd);

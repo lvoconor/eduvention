@@ -21,8 +21,7 @@ public class Alert {
 	}
 
 	public String getWarning() {
-		String warningString = fileName + ": " + content;
-		return warningString;
+		return content;
 	}
 
 	public String toString() {

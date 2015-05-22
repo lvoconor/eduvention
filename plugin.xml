@@ -34,5 +34,11 @@
             file="contexts.xml">
       </contexts>
    </extension>
-
+   <extension
+      id="marker"
+      point="org.eclipse.core.resources.markers"
+      name="Style">
+      <super type="org.eclipse.core.resources.problemmarker"/>
+      <persistent value="true" />
+   </extension>
 </plugin>

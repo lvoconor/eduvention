@@ -19,7 +19,7 @@ public class CommentMetric implements IMetric {
 		if(content == null){
 			return null;
 		}
-		Alert a = new Alert("comment", aFile.name, content);
+		Alert a = new Alert("comment", aFile.name, content, 1);
 		alerts.add(a);
 		return alerts;
 	}

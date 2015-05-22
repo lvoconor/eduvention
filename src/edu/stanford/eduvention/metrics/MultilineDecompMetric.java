@@ -46,7 +46,7 @@ public class MultilineDecompMetric implements IMetric  {
 	
 	private String getAlertContentString(Method m){
 		if(m.getNumOfBodyLines() > MAX_METHOD_LENGTH){
-			return "Method "+ m.getName() + " at line " + m.getBeginLine() + " is " + m.getNumOfBodyLines() + " lines. Consider decomposing";
+			return "Method '"+ m.getName() + "' is " + m.getNumOfBodyLines() + " lines. Consider decomposing.";
 		}
 		else{
 			return null;
