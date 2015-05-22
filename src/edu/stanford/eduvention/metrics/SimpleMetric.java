@@ -14,7 +14,7 @@ public class SimpleMetric implements IMetric {
 		if(content == null){
 			return null;
 		}
-		Alert a = new Alert("simple", file.name, content);
+		Alert a = new Alert("simple", file.name, content, 1);
 		alerts.add(a);
 		return alerts;
 	}

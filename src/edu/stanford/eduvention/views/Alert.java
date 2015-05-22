@@ -5,6 +5,7 @@ public class Alert {
 	public String fileName;
 	public int lineNumber;
 	public String content;
+
 	public Alert(String type, String fileName, String content, int lineNumber){
 		this.type = type;
 		this.content = content;

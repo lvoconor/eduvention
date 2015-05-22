@@ -6,19 +6,23 @@ import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.eclipse.core.resources.IFile;
+
+import edu.stanford.eduvention.views.Alert;
 import parser.SourceCodeAnalytics;
 import stanford.exception.ErrorException;
 import stanford.java.parser.SourceCodeParser;
-import edu.stanford.eduvention.views.Alert;
 public class AlertFile {
+	public IFile file;
 	public String name;
 	public String contents;
 	public Integer lines;
 	public ArrayList<Alert> alerts;
 	public boolean isValid;
 
-	public AlertFile(String name, String contents){
+	public AlertFile(IFile file, String name, String contents) {
 		alerts = new ArrayList<Alert>();
+		this.file = file;
 		this.name = name;
 		this.contents = contents;
 		this.lines = getNumLines(contents);

@@ -29,21 +29,11 @@ public class DataManager {
 	private IEclipsePreferences prefs;
 	private String name;
 	private String sunet;
-	private long lastUpdate;
 
 	private static final String ENCODING = "US-ASCII";
 
 	public DataManager() {
 		prefs = InstanceScope.INSTANCE.getNode("edu.stanford.eduvention");
-		lastUpdate = 0;
-	}
-
-	public long getLastUpdate() {
-		return lastUpdate;
-	}
-
-	public void setLastUpdate(long t) {
-		lastUpdate = t;
 	}
 
 	/*

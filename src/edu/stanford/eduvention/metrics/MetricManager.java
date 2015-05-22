@@ -34,7 +34,7 @@ public class MetricManager {
 				alertStrings.add("file " + file.name + " does not compile. Please fix syntax errors");
 				continue;
 			}
-			for( Alert a: file.alerts){
+			for(Alert a: file.alerts) {
 				alertStrings.add(a.getWarning());
 			}
 		}
@@ -81,7 +81,7 @@ public class MetricManager {
 				toAdd = new SimpleMetric().getAlerts(file);
 				if (toAdd != null)
 					file.alerts.addAll(toAdd);
-					
+
 				/* Alert 2: check comment ratio */
 				toAdd = new CommentMetric().getAlerts(file);
 				if (toAdd != null)
@@ -149,7 +149,7 @@ public class MetricManager {
 	    if(!fileName.contains(".java")){
 			return null;
 		}
-		AlertFile aFile = new AlertFile(fileName, contents);
+		AlertFile aFile = new AlertFile(file, fileName, contents);
 		s.close();
 		
 		return aFile;

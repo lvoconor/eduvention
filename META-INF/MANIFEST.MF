@@ -15,3 +15,4 @@ Bundle-ActivationPolicy: lazy
 Bundle-ClassPath: .,
  lib/javax.json-1.0.4.jar,
  lib/src_code_analytics.jar
+Import-Package: org.eclipse.ui.texteditor

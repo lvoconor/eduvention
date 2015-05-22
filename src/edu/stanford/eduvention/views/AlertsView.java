@@ -1,11 +1,17 @@
 package edu.stanford.eduvention.views;
 
+import java.util.HashMap;
+
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.part.*;
+import org.eclipse.ui.texteditor.MarkerUtilities;
+import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.jface.action.*;
@@ -42,7 +48,7 @@ public class AlertsView extends ViewPart implements IResourceChangeListener {
 	 */
 	public static final String ID = "edu.stanford.eduvention.views.AlertsView";
 	
-	public static final int MIN_NETWORK_INTERVAL = 2000;
+	public static final int MIN_CHANGE_INTERVAL = 5000;
 	
 	private TableViewer viewer;
 	private Action openPrefs;
@@ -50,6 +56,7 @@ public class AlertsView extends ViewPart implements IResourceChangeListener {
 	private Action openQuestion;
 	private QuestionView question;
 	private DataManager dataManager;
+	private long lastUpdate;
 
 	/*
 	 * The content provider class is responsible for
@@ -92,6 +99,7 @@ public class AlertsView extends ViewPart implements IResourceChangeListener {
 		prefs = new PrefsView(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell());
 		question = new QuestionView(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell());
 		dataManager = new DataManager();
+		lastUpdate = 0;
 		ResourcesPlugin.getWorkspace().addResourceChangeListener(this, IResourceChangeEvent.POST_CHANGE);
 	}
 
@@ -177,21 +185,47 @@ public class AlertsView extends ViewPart implements IResourceChangeListener {
 		viewer.getControl().setFocus();
 	}
 	
+	private void updateMarkers() {
+		try {
+			ResourcesPlugin.getWorkspace().getRoot().deleteMarkers(IMarker.PROBLEM, true, IResource.DEPTH_INFINITE);
+		} catch (CoreException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		for (AlertFile aFile : MetricManager.getAlertFiles()) {
+			if (aFile.alerts != null) {
+				for (Alert alert : aFile.alerts) {
+					if (alert.lineNumber > 0) {
+						HashMap map = new HashMap();
+					   	MarkerUtilities.setLineNumber(map, alert.lineNumber);
+					   	try {
+						   MarkerUtilities.createMarker(aFile.file, map, IMarker.PROBLEM);
+						} catch (CoreException e) {
+							e.printStackTrace();
+							System.out.println("Failed to add marker.");
+						}
+					}
+				}
+			}
+		}
+	}
+
 	@Override
 	public void resourceChanged(IResourceChangeEvent event) {
+		if (lastUpdate > System.currentTimeMillis() - MIN_CHANGE_INTERVAL)
+			return;
+		lastUpdate = System.currentTimeMillis();
 		new Thread(new Runnable() {
 	    	public void run() {
     			MetricManager.update();
     			Display.getDefault().asyncExec(new Runnable() {
     	               public void run() {
     	                  viewer.refresh();
+   	                      updateMarkers();
     	               }
     			});
     			new Thread(new Runnable() {
     		    	public void run() {
-    		    		if (dataManager.getLastUpdate() > System.currentTimeMillis() - MIN_NETWORK_INTERVAL)
-    		    			return;
-    		    		dataManager.setLastUpdate(System.currentTimeMillis());
     		    		for(AlertFile a: MetricManager.getAlertFiles()) {
     		    			if(a.isValid){
     		    				dataManager.postSnapshot(a);
