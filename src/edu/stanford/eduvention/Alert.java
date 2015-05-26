@@ -1,4 +1,4 @@
-package edu.stanford.eduvention.views;
+package edu.stanford.eduvention;
 
 public class Alert {
 	public String type;

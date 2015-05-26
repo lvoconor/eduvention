@@ -19,8 +19,9 @@ import org.eclipse.ui.*;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.SWT;
 
+import edu.stanford.eduvention.Alert;
 import edu.stanford.eduvention.AlertFile;
-import edu.stanford.eduvention.DataManager;
+import edu.stanford.eduvention.NetworkManager;
 import edu.stanford.eduvention.metrics.*;
 
 /**
@@ -52,10 +53,10 @@ public class AlertsView extends ViewPart implements IResourceChangeListener {
 	
 	private TableViewer viewer;
 	private Action openPrefs;
-	private PrefsView prefs;
+	private PrefsDialog prefs;
 	private Action openQuestion;
-	private QuestionView question;
-	private DataManager dataManager;
+	private QuestionDialog question;
+	private NetworkManager dataManager;
 	private long lastUpdate;
 
 	/*
@@ -96,9 +97,9 @@ public class AlertsView extends ViewPart implements IResourceChangeListener {
 	 * The constructor.
 	 */
 	public AlertsView() {
-		prefs = new PrefsView(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell());
-		question = new QuestionView(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell());
-		dataManager = new DataManager();
+		prefs = new PrefsDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell());
+		question = new QuestionDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell());
+		dataManager = new NetworkManager();
 		lastUpdate = 0;
 		ResourcesPlugin.getWorkspace().addResourceChangeListener(this, IResourceChangeEvent.POST_CHANGE);
 	}

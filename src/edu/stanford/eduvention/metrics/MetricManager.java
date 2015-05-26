@@ -13,8 +13,8 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 
+import edu.stanford.eduvention.Alert;
 import edu.stanford.eduvention.AlertFile;
-import edu.stanford.eduvention.views.Alert;
 
 public class MetricManager {
 	private static ArrayList<AlertFile> alerts = new ArrayList<AlertFile>();
@@ -83,7 +83,7 @@ public class MetricManager {
 					file.alerts.addAll(toAdd);
 
 				/* Alert 2: find methods that are too long */
-				toAdd = new MultilineDecompMetric().getAlerts(file);
+				toAdd = new DecompMetric().getAlerts(file);
 				if (toAdd != null)
 					file.alerts.addAll(toAdd);
 					

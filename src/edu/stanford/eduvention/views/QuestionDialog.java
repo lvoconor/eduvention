@@ -11,7 +11,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
-import edu.stanford.eduvention.DataManager;
+import edu.stanford.eduvention.NetworkManager;
 
 /* Sources: 
  * 1. http://www.vogella.com/tutorials/EclipseDialogs/article.html#tutorialjface_userdefined
@@ -21,14 +21,14 @@ import edu.stanford.eduvention.DataManager;
  * 5. http://wiki.eclipse.org/FAQ_How_do_I_load_and_save_plug-in_preferences%3F
  * 6. http://stackoverflow.com/questions/4788315/how-to-store-eclipse-plug-in-state-between-sessions
  * 7. http://www.java2s.com/Tutorial/Java/0280__SWT/Createamultiplelinetextfield.htm */
-public class QuestionView extends TitleAreaDialog {
+public class QuestionDialog extends TitleAreaDialog {
 
 	private Text questionTxt;
-	private DataManager dataManager;
+	private NetworkManager dataManager;
 
-	public QuestionView(Shell parentShell) {
+	public QuestionDialog(Shell parentShell) {
 		super(parentShell);
-		dataManager = new DataManager();
+		dataManager = new NetworkManager();
 	}
 
 	@Override

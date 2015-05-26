@@ -9,10 +9,10 @@ import parser.Method;
 import parser.SourceCodeAnalytics;
 import stanford.exception.ErrorException;
 import stanford.java.parser.SourceCodeParser;
+import edu.stanford.eduvention.Alert;
 import edu.stanford.eduvention.AlertFile;
-import edu.stanford.eduvention.views.Alert;
 
-public class MultilineDecompMetric implements IMetric  {
+public class DecompMetric implements IMetric  {
 	public static final Integer MAX_METHOD_LENGTH = 20;
 	@Override
 	public ArrayList<Alert> getAlerts(AlertFile aFile) {

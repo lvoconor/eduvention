@@ -4,8 +4,8 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
 
+import edu.stanford.eduvention.Alert;
 import edu.stanford.eduvention.AlertFile;
-import edu.stanford.eduvention.views.Alert;
 import parser.SourceCodeAnalytics;
 
 public class CommentMetric implements IMetric {

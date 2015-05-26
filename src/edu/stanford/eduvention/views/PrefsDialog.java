@@ -21,7 +21,7 @@ import org.osgi.service.prefs.BackingStoreException;
  * 4. http://www.vogella.com/tutorials/EclipsePreferences/article.html
  * 5. http://wiki.eclipse.org/FAQ_How_do_I_load_and_save_plug-in_preferences%3F
  * 6. http://stackoverflow.com/questions/4788315/how-to-store-eclipse-plug-in-state-between-sessions */
-public class PrefsView extends TitleAreaDialog {
+public class PrefsDialog extends TitleAreaDialog {
 
   private Text sunetTxt;
   private Text nameTxt;
@@ -29,7 +29,7 @@ public class PrefsView extends TitleAreaDialog {
   private String sunet;
   private String name;
 
-  public PrefsView(Shell parentShell) {
+  public PrefsDialog(Shell parentShell) {
     super(parentShell);
     loadSettings();
   }

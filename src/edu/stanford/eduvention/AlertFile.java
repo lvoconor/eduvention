@@ -8,7 +8,6 @@ import java.util.regex.Pattern;
 
 import org.eclipse.core.resources.IFile;
 
-import edu.stanford.eduvention.views.Alert;
 import parser.SourceCodeAnalytics;
 import stanford.exception.ErrorException;
 import stanford.java.parser.SourceCodeParser;

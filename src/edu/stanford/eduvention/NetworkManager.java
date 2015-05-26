@@ -22,9 +22,7 @@ import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.osgi.service.prefs.BackingStoreException;
 
-import edu.stanford.eduvention.views.Alert;
-
-public class DataManager {
+public class NetworkManager {
 
 	private IEclipsePreferences prefs;
 	private String name;
@@ -32,7 +30,7 @@ public class DataManager {
 
 	private static final String ENCODING = "US-ASCII";
 
-	public DataManager() {
+	public NetworkManager() {
 		prefs = InstanceScope.INSTANCE.getNode("edu.stanford.eduvention");
 	}
 
