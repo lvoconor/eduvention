@@ -8,9 +8,9 @@ import java.util.regex.Pattern;
 
 import org.eclipse.core.resources.IFile;
 
-import parser.SourceCodeAnalytics;
 import stanford.exception.ErrorException;
 import stanford.java.parser.SourceCodeParser;
+
 public class AlertFile {
 	public IFile file;
 	public String name;
@@ -34,7 +34,7 @@ public class AlertFile {
 		byte[] bytes = contents.getBytes();
         InputStream inStream =  new ByteArrayInputStream(bytes);
         try{
-            SourceCodeParser s = new SourceCodeParser(inStream);
+            new SourceCodeParser(inStream);
         }
         catch(ErrorException e){
         	return false;

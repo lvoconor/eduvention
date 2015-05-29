@@ -56,8 +56,7 @@ public class NetworkManager {
 		int postDataLength = postData.length;
 		URL url;
 		try {
-			url = new URL(
-					"http://eduvention-website.herokuapp.com/snapshots/create");
+			url = new URL(SNAPSHOT_URL);
 		} catch (MalformedURLException e2) {
 			e2.printStackTrace();
 			return;
@@ -216,6 +215,5 @@ public class NetworkManager {
 			return;
 		}
 		sunet = prefs.get("sunet", "unknown");
-		name = prefs.get("name", "unknown");
 	}
 }

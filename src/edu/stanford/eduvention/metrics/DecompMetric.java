@@ -6,7 +6,6 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 
 import parser.Method;
-import parser.SourceCodeAnalytics;
 import stanford.exception.ErrorException;
 import stanford.java.parser.SourceCodeParser;
 import edu.stanford.eduvention.Alert;

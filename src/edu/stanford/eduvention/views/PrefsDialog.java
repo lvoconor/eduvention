@@ -24,10 +24,7 @@ import org.osgi.service.prefs.BackingStoreException;
 public class PrefsDialog extends TitleAreaDialog {
 
   private Text sunetTxt;
-  private Text nameTxt;
-
   private String sunet;
-  private String name;
 
   public PrefsDialog(Shell parentShell) {
     super(parentShell);
@@ -50,19 +47,13 @@ public class PrefsDialog extends TitleAreaDialog {
     container.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
     container.setLayout(layout);
 
-    GridData nameD = createField(container, "Name", nameTxt);
     GridData sunetD = createField(container, "SUNet ID", sunetTxt);
-
-    nameTxt = new Text(container, SWT.BORDER);
-    nameTxt.setLayoutData(nameD);
     
     sunetTxt = new Text(container, SWT.BORDER);
     sunetTxt.setLayoutData(sunetD);
     
     if (sunet != null)
     	sunetTxt.setText(sunet);
-    if (name != null)
-    	nameTxt.setText(name);
     
     return area;
   }
@@ -86,7 +77,6 @@ public class PrefsDialog extends TitleAreaDialog {
   // as soon as the Dialog closes
   private void saveInput() {
 	this.sunet = sunetTxt.getText();
-    this.name = nameTxt.getText();
   }
 
   @Override
@@ -94,10 +84,6 @@ public class PrefsDialog extends TitleAreaDialog {
     saveInput();
     saveSettings();
     super.okPressed();
-  }
-
-  public String getName() {
-    return name;
   }
 
   public String getSUNet() {
@@ -109,7 +95,6 @@ public class PrefsDialog extends TitleAreaDialog {
 	  IEclipsePreferences prefs = InstanceScope.INSTANCE.getNode("edu.stanford.eduvention");
 
 	  prefs.put("sunet", this.sunet);
-	  prefs.put("name", this.name);
 	  try {
 		prefs.flush();
 	  } catch (BackingStoreException e) {
@@ -123,6 +108,5 @@ public class PrefsDialog extends TitleAreaDialog {
 	  } catch (BackingStoreException e) {
 	  }
 	  this.sunet = prefs.get("sunet", "forgot");
-	  this.name= prefs.get("name", "forgot");
 	}
 }

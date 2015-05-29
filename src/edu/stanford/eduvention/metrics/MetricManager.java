@@ -3,8 +3,6 @@ package edu.stanford.eduvention.metrics;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Scanner;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
@@ -134,6 +132,7 @@ public class MetricManager {
 		s = new Scanner(is);
 		s.useDelimiter("\\A");
 	    String contents = s.hasNext() ? s.next() : "";
+	    s.close();
 	    String fileName = file.getName();
 		//filter out non-java files
 	    if(!fileName.contains(".java")){
