@@ -9,10 +9,10 @@
             id="edu.stanford.eduvention">
       </category>
       <view
-            name="Alerts"
+            name="Questions"
             icon="icons/sample.gif"
             category="edu.stanford.eduvention"
-            class="edu.stanford.eduvention.views.AlertsView"
+            class="edu.stanford.eduvention.views.QuestionView"
             id="edu.stanford.eduvention.views.AlertsView">
       </view>
    </extension>

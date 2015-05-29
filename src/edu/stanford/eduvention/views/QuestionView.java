@@ -6,7 +6,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.part.*;
 import org.eclipse.ui.texteditor.MarkerUtilities;
-import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
@@ -42,7 +41,7 @@ import edu.stanford.eduvention.metrics.*;
  * <p>
  */
 
-public class AlertsView extends ViewPart implements IResourceChangeListener {
+public class QuestionView extends ViewPart implements IResourceChangeListener {
 
 	/**
 	 * The ID of the view as specified by the extension.
@@ -56,7 +55,7 @@ public class AlertsView extends ViewPart implements IResourceChangeListener {
 	private PrefsDialog prefs;
 	private Action openQuestion;
 	private QuestionDialog question;
-	private NetworkManager dataManager;
+	private NetworkManager networkManager;
 	private long lastUpdate;
 
 	/*
@@ -75,7 +74,7 @@ public class AlertsView extends ViewPart implements IResourceChangeListener {
 		public void dispose() {
 		}
 		public Object[] getElements(Object parent) {
-			return MetricManager.get();
+			return networkManager.getQuestions();
 		}
 	}
 	class ViewLabelProvider extends LabelProvider implements ITableLabelProvider {
@@ -96,10 +95,10 @@ public class AlertsView extends ViewPart implements IResourceChangeListener {
 	/**
 	 * The constructor.
 	 */
-	public AlertsView() {
+	public QuestionView() {
 		prefs = new PrefsDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell());
 		question = new QuestionDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell());
-		dataManager = new NetworkManager();
+		networkManager = new NetworkManager();
 		lastUpdate = 0;
 		ResourcesPlugin.getWorkspace().addResourceChangeListener(this, IResourceChangeEvent.POST_CHANGE);
 	}
@@ -127,7 +126,7 @@ public class AlertsView extends ViewPart implements IResourceChangeListener {
 		menuMgr.setRemoveAllWhenShown(true);
 		menuMgr.addMenuListener(new IMenuListener() {
 			public void menuAboutToShow(IMenuManager manager) {
-				AlertsView.this.fillContextMenu(manager);
+				QuestionView.this.fillContextMenu(manager);
 			}
 		});
 		Menu menu = menuMgr.createContextMenu(viewer.getControl());
@@ -197,7 +196,7 @@ public class AlertsView extends ViewPart implements IResourceChangeListener {
 			if (aFile.alerts != null) {
 				for (Alert alert : aFile.alerts) {
 					if (alert.lineNumber > 0) {
-						HashMap map = new HashMap();
+						HashMap<String,Object> map = new HashMap<String,Object>();
 					   	MarkerUtilities.setLineNumber(map, alert.lineNumber);
 					   	MarkerUtilities.setMessage(map, alert.getWarning());
 					   	try {
@@ -222,7 +221,7 @@ public class AlertsView extends ViewPart implements IResourceChangeListener {
     			MetricManager.update();
     			Display.getDefault().asyncExec(new Runnable() {
     	               public void run() {
-    	                  viewer.refresh();
+    	            	   viewer.refresh();
    	                      updateMarkers();
     	               }
     			});
@@ -230,7 +229,7 @@ public class AlertsView extends ViewPart implements IResourceChangeListener {
     		    	public void run() {
     		    		for(AlertFile a: MetricManager.getAlertFiles()) {
     		    			if(a.isValid){
-    		    				dataManager.postSnapshot(a);
+    		    				networkManager.postSnapshot(a);
     		    			}
     					}
     	    		}
