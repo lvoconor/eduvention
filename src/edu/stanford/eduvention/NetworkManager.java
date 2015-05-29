@@ -36,8 +36,9 @@ public class NetworkManager {
 	private long lastUpdate = 0;
 	private static final int MIN_CHANGE_INTERVAL = 3000;
 
-	private static final String QUESTION_URL = "http://eduvention-website.herokuapp.com/get_questions?sunet="; // Append SUNet
-	private static final String SNAPSHOT_URL = "http://eduvention-website.herokuapp.com/snapshots/create";
+	private static final String GET_QUESTION_URL = "http://eduvention-website.herokuapp.com/get_questions?sunet="; // Append SUNet
+	private static final String POST_QUESTION_URL = "http://eduvention-website.herokuapp.com/question/create";
+	private static final String POST_SNAPSHOT_URL = "http://eduvention-website.herokuapp.com/snapshots/create";
 	private static final String ENCODING = "US-ASCII";
 
 	public NetworkManager() {
@@ -63,7 +64,7 @@ public class NetworkManager {
 	    		loadSettings();
 	    		URL url;
 	    		try {
-	    			url = new URL(QUESTION_URL+sunet);
+	    			url = new URL(GET_QUESTION_URL+sunet);
 	    		} catch (MalformedURLException e2) {
 	    			e2.printStackTrace();
 	    			return;
@@ -135,7 +136,7 @@ public class NetworkManager {
 		int postDataLength = postData.length;
 		URL url;
 		try {
-			url = new URL(SNAPSHOT_URL);
+			url = new URL(POST_SNAPSHOT_URL);
 		} catch (MalformedURLException e2) {
 			e2.printStackTrace();
 			return;
@@ -210,7 +211,7 @@ public class NetworkManager {
 		return j.toString();
 	}
 
-	public void postQuestion(String question) {
+	public void postQuestion(String question, String filename, int line_number) {
 		loadSettings();
 		// Generate POST request body
 		JsonBuilderFactory factory = Json.createBuilderFactory(null);
@@ -228,6 +229,8 @@ public class NetworkManager {
 				.add("assignment_id", 6)
 				// TODO store assignment_id
 				.add("student_id", sunet)
+				.add("filename", filename)
+				.add("line_number", line_number)
 				.add("question", contents)
 				.add("datetime",
 						new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
@@ -245,8 +248,7 @@ public class NetworkManager {
 		int postDataLength = postData.length;
 		URL url;
 		try {
-			url = new URL(
-					"http://eduvention-website.herokuapp.com/question/create");
+			url = new URL(POST_QUESTION_URL);
 		} catch (MalformedURLException e2) {
 			e2.printStackTrace();
 			return;
