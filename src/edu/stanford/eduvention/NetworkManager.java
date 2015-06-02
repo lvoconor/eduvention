@@ -36,21 +36,21 @@ public class NetworkManager {
 	private long lastUpdate = 0;
 	private static final int MIN_CHANGE_INTERVAL = 3000;
 
-	private static final String GET_QUESTION_URL = "http://eduvention-website.herokuapp.com/get_questions?sunet="; // Append SUNet
+	private static final String GET_QUESTION_URL = "http://eduvention-website.herokuapp.com/get_comments?sunet="; // Append SUNet
 	private static final String POST_QUESTION_URL = "http://eduvention-website.herokuapp.com/question/create";
 	private static final String POST_SNAPSHOT_URL = "http://eduvention-website.herokuapp.com/snapshots/create";
 	private static final String ENCODING = "US-ASCII";
 
 	public NetworkManager() {
 		prefs = InstanceScope.INSTANCE.getNode("edu.stanford.eduvention");
-		downloadQuestions();
+		downloadQuestionsAsync();
 	}
 
 	public Object[] getQuestions() {
 		if (lastUpdate > System.currentTimeMillis() - MIN_CHANGE_INTERVAL)
 			return questions;
 		lastUpdate = System.currentTimeMillis();
-		downloadQuestions();
+		downloadQuestionsAsync();
 		return questions;
 	}
 
@@ -58,7 +58,7 @@ public class NetworkManager {
 		this.questions = questions;
 	}
 	
-	private void downloadQuestions() {
+	private void downloadQuestionsAsync() {
 		Display.getDefault().asyncExec(new Runnable() {
 	    	public void run() {
 	    		loadSettings();
@@ -102,15 +102,21 @@ public class NetworkManager {
 	    		} catch (IOException e) {
 	    			e.printStackTrace();
 	    		}
-	    		ArrayList<String> questions = new ArrayList<String>();
 	    		if (response == null || response.equals("")) {
 	    			return;
 	    		}
+				ArrayList<Question> questions = new ArrayList<Question>();
 	    		JsonReader jsonReader = Json.createReader(new StringReader(response));
 	    		JsonArray arr = jsonReader.readArray();
 	    		jsonReader.close();
 	    		for(int i = 0; i < arr.size(); i++){
-	                questions.add(arr.getJsonObject(i).getString("message"));
+	    			String role = arr.getJsonObject(i).getString("type");
+	    			String poster = role == "student" ? "You" : role.substring(0, 1).toUpperCase() + role.substring(1);
+	    			String message = arr.getJsonObject(i).getString("message");
+	    			String filename = arr.getJsonObject(i).getString("filename");
+	    			String lineNumber = arr.getJsonObject(i).getString("line_number");
+	    			Question question = new Question("You", message, "TestingTesting.java", 1);
+	    			questions.add(question);
 	            }
 	    		setQuestions(questions.toArray());
     		}
@@ -290,7 +296,7 @@ public class NetworkManager {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		downloadQuestions();
+		downloadQuestionsAsync();
 	}
 
 	private void loadSettings() {

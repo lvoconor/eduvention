@@ -1,11 +1,13 @@
 package edu.stanford.eduvention.views;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.part.*;
 import org.eclipse.ui.texteditor.MarkerUtilities;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
@@ -20,7 +22,9 @@ import org.eclipse.swt.SWT;
 
 import edu.stanford.eduvention.Alert;
 import edu.stanford.eduvention.AlertFile;
+import edu.stanford.eduvention.EditorFile;
 import edu.stanford.eduvention.NetworkManager;
+import edu.stanford.eduvention.Question;
 import edu.stanford.eduvention.metrics.*;
 
 /**
@@ -113,6 +117,27 @@ public class QuestionView extends ViewPart implements IResourceChangeListener {
 		viewer.setLabelProvider(new ViewLabelProvider());
 		viewer.setSorter(new NameSorter());
 		viewer.setInput(getViewSite());
+		
+		// Create selection listener
+		// Reference: stackoverflow.com/questions/7704211/how-to-know-which-row-has-been-selected-in-a-tableviewer
+//		viewer.addSelectionChangedListener(new ISelectionChangedListener() {
+//		    public void selectionChanged(final SelectionChangedEvent event) {
+//		        Object rawSelection = ((IStructuredSelection)event.getSelection()).getFirstElement();
+//		        if (rawSelection == null || !(rawSelection instanceof Question)) {
+//		        	return;
+//		        }
+//		        Question selection = (Question)rawSelection;
+//		        EditorFile file = getFileFromName(selection.getFilename());
+//		        if (file == null) {
+//		        	return;
+//		        }
+//		        // Source: https://www.eclipse.org/forums/index.php?t=msg&th=51063&goto=163463&#msg_163463
+//		        IEditorPart part = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActiveEditor();
+//		        if (part instanceof MultiPageEditorPart) {
+//		        	((MultiPageEditorPart) part).setActiveEditor(file.getEditorPart());
+//		        }
+//		    }
+//		});
 
 		// Create the help context id for the viewer's control
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(viewer.getControl(), "edu.stanford.eduvention.viewer");
@@ -236,5 +261,41 @@ public class QuestionView extends ViewPart implements IResourceChangeListener {
     		    }).start();
 	    	}
 	    }).start();
+	}
+
+	private ArrayList<EditorFile> getOpenFiles() {
+		// Reference: http://stackoverflow.com/questions/8190554/finding-currently-open-files-in-eclipse-plugin
+		//get all active editor references,check if reference is of type java editor    
+		IEditorReference[] ref = PlatformUI.getWorkbench()
+		    .getActiveWorkbenchWindow().getActivePage()
+		    .getEditorReferences();
+		ArrayList<EditorFile> files = new ArrayList<EditorFile>();
+		for (IEditorReference reference : ref) {
+		    if ("org.eclipse.jdt.ui.CompilationUnitEditor".equals(reference.getId())){
+		    	try {
+			    	IEditorInput input = reference.getEditorInput();
+				    if (input instanceof IFileEditorInput) {
+				    	IEditorPart editorPart = reference.getEditor(true);
+				    	IFile ifile = ((IFileEditorInput)input).getFile();
+				    	String name = ifile.getName();
+				    	EditorFile file = new EditorFile(editorPart, ifile, name);
+				    	files.add(file);
+				    }
+		    	}
+		    	catch (PartInitException e) {
+		    	}
+		    }
+		}
+		return files;
+	}
+	
+	private EditorFile getFileFromName(String filename) {
+		ArrayList<EditorFile> files = getOpenFiles();
+		for (EditorFile file: files) {
+			if (file.getName().equals(filename)) {
+				return file;
+			}
+		}
+		return null;
 	}
 }
