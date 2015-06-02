@@ -102,6 +102,9 @@ public class NetworkManager {
 	    			e.printStackTrace();
 	    		}
 	    		ArrayList<String> questions = new ArrayList<String>();
+	    		if (response == null || response.equals("")) {
+	    			return;
+	    		}
 	    		JsonReader jsonReader = Json.createReader(new StringReader(response));
 	    		JsonArray arr = jsonReader.readArray();
 	    		jsonReader.close();
