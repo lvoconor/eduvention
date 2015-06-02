@@ -24,7 +24,6 @@ import edu.stanford.eduvention.Alert;
 import edu.stanford.eduvention.AlertFile;
 import edu.stanford.eduvention.EditorFile;
 import edu.stanford.eduvention.NetworkManager;
-import edu.stanford.eduvention.Question;
 import edu.stanford.eduvention.metrics.*;
 
 /**
@@ -127,6 +126,9 @@ public class QuestionView extends ViewPart implements IResourceChangeListener {
 //		        	return;
 //		        }
 //		        Question selection = (Question)rawSelection;
+//				if (selection.getFilename() == null) {
+//					return;
+//				}
 //		        EditorFile file = getFileFromName(selection.getFilename());
 //		        if (file == null) {
 //		        	return;

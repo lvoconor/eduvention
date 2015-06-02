@@ -110,12 +110,17 @@ public class NetworkManager {
 	    		JsonArray arr = jsonReader.readArray();
 	    		jsonReader.close();
 	    		for(int i = 0; i < arr.size(); i++){
+	    			// TODO: Enable getting file info from JSON
+	    			JsonObject jobj = arr.getJsonObject(i);
+	    			if (jobj == null) {
+	    				continue;
+	    			}
 	    			String role = arr.getJsonObject(i).getString("type");
-	    			String poster = role == "student" ? "You" : role.substring(0, 1).toUpperCase() + role.substring(1);
+	    			String poster = role.equals("student") ? "You" : role.substring(0, 1).toUpperCase() + role.substring(1);
 	    			String message = arr.getJsonObject(i).getString("message");
 	    			String filename = arr.getJsonObject(i).getString("filename");
-	    			String lineNumber = arr.getJsonObject(i).getString("line_number");
-	    			Question question = new Question("You", message, "TestingTesting.java", 1);
+	    			int lineNumber = arr.getJsonObject(i).getInt("line_number");
+	    			Question question = new Question(poster, message, filename, lineNumber);
 	    			questions.add(question);
 	            }
 	    		setQuestions(questions.toArray());
