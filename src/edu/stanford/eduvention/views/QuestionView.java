@@ -247,7 +247,6 @@ public class QuestionView extends ViewPart implements IResourceChangeListener {
 		try {
 			ResourcesPlugin.getWorkspace().getRoot().deleteMarkers("edu.stanford.eduvention.marker", true, IResource.DEPTH_INFINITE);
 		} catch (CoreException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 		for (AlertFile aFile : MetricManager.getAlertFiles()) {

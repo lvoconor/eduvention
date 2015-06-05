@@ -22,6 +22,8 @@ import org.osgi.service.prefs.BackingStoreException;
  * 5. http://wiki.eclipse.org/FAQ_How_do_I_load_and_save_plug-in_preferences%3F
  * 6. http://stackoverflow.com/questions/4788315/how-to-store-eclipse-plug-in-state-between-sessions */
 public class PrefsDialog extends TitleAreaDialog {
+	
+  private static final String PREFS_ID = "edu.stanford.eduvention";
 
   private Text sunetTxt;
   private String sunet;
@@ -91,8 +93,7 @@ public class PrefsDialog extends TitleAreaDialog {
   }
   
   private void saveSettings() {
-	  // TODO: remove name, place in constant
-	  IEclipsePreferences prefs = InstanceScope.INSTANCE.getNode("edu.stanford.eduvention");
+	  IEclipsePreferences prefs = InstanceScope.INSTANCE.getNode(PREFS_ID);
 
 	  prefs.put("sunet", this.sunet);
 	  try {
@@ -102,7 +103,7 @@ public class PrefsDialog extends TitleAreaDialog {
 	}
 
 	private void loadSettings() {
-	  IEclipsePreferences prefs = InstanceScope.INSTANCE.getNode("edu.stanford.eduvention");
+	  IEclipsePreferences prefs = InstanceScope.INSTANCE.getNode(PREFS_ID);
 	  try {
 		prefs.sync();
 	  } catch (BackingStoreException e) {

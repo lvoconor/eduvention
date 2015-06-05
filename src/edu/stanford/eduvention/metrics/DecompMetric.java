@@ -21,14 +21,12 @@ public class DecompMetric implements IMetric  {
 		try {
 			bytes = aFile.contents.getBytes("UTF-8");
 		} catch (UnsupportedEncodingException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 		InputStream is = new ByteArrayInputStream(bytes);
 		try {
 			s = new SourceCodeParser(is);
 		} catch (ErrorException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		ArrayList<Method> methods = (ArrayList<Method>) s.getMethods();
