@@ -120,7 +120,8 @@ public class NetworkManager {
 	    			String message = arr.getJsonObject(i).getString("message");
 	    			String filename = arr.getJsonObject(i).getString("filename");
 	    			int lineNumber = arr.getJsonObject(i).getInt("line_number");
-	    			Question question = new Question(poster, message, filename, lineNumber);
+	    			String timestamp = arr.getJsonObject(i).getString("created_at");
+	    			Question question = new Question(poster, message, filename, lineNumber, timestamp);
 	    			questions.add(question);
 	            }
 	    		setQuestions(questions.toArray());

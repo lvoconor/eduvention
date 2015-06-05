@@ -6,6 +6,7 @@ import java.util.HashMap;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.part.*;
+import org.eclipse.ui.texteditor.ITextEditor;
 import org.eclipse.ui.texteditor.MarkerUtilities;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
@@ -13,6 +14,9 @@ import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.jface.action.*;
@@ -24,6 +28,7 @@ import edu.stanford.eduvention.Alert;
 import edu.stanford.eduvention.AlertFile;
 import edu.stanford.eduvention.EditorFile;
 import edu.stanford.eduvention.NetworkManager;
+import edu.stanford.eduvention.Question;
 import edu.stanford.eduvention.metrics.*;
 
 /**
@@ -92,7 +97,13 @@ public class QuestionView extends ViewPart implements IResourceChangeListener {
 					getSharedImages().getImage(ISharedImages.IMG_OBJ_ELEMENT);
 		}
 	}
-	class NameSorter extends ViewerSorter {
+	class DateSorter extends ViewerSorter {
+		public int compare(Viewer viewer, Object A, Object B) {
+			if (!(A instanceof Question) || !(B instanceof Question)) {
+				return A.toString().compareTo(B.toString());
+			}
+			return -1*((Question)A).getTimestamp().compareTo(((Question)B).getTimestamp());
+		}
 	}
 
 	/**
@@ -105,6 +116,30 @@ public class QuestionView extends ViewPart implements IResourceChangeListener {
 		lastUpdate = 0;
 		ResourcesPlugin.getWorkspace().addResourceChangeListener(this, IResourceChangeEvent.POST_CHANGE);
 	}
+	
+	private static void goToLine(IEditorPart editorPart, int lineNumber) {
+		// Source: http://stackoverflow.com/a/3329425/4905462
+		if (!(editorPart instanceof ITextEditor) || lineNumber <= 0) {
+			return;
+		}
+		ITextEditor editor = (ITextEditor) editorPart;
+		IDocument document = editor.getDocumentProvider().getDocument(
+				editor.getEditorInput());
+		if (document != null) {
+			IRegion lineInfo = null;
+			try {
+				// line count internally starts with 0, and not with 1 like in
+				// GUI
+				lineInfo = document.getLineInformation(lineNumber - 1);
+			} catch (BadLocationException e) {
+				// ignored because line number may not really exist in document,
+				// we guess this...
+			}
+			if (lineInfo != null) {
+				editor.selectAndReveal(lineInfo.getOffset(), lineInfo.getLength());
+			}
+		}
+	}
 
 	/**
 	 * This is a callback that will allow us
@@ -114,32 +149,28 @@ public class QuestionView extends ViewPart implements IResourceChangeListener {
 		viewer = new TableViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
 		viewer.setContentProvider(new ViewContentProvider());
 		viewer.setLabelProvider(new ViewLabelProvider());
-		viewer.setSorter(new NameSorter());
+		viewer.setSorter(new DateSorter());
 		viewer.setInput(getViewSite());
-		
 		// Create selection listener
 		// Reference: stackoverflow.com/questions/7704211/how-to-know-which-row-has-been-selected-in-a-tableviewer
-//		viewer.addSelectionChangedListener(new ISelectionChangedListener() {
-//		    public void selectionChanged(final SelectionChangedEvent event) {
-//		        Object rawSelection = ((IStructuredSelection)event.getSelection()).getFirstElement();
-//		        if (rawSelection == null || !(rawSelection instanceof Question)) {
-//		        	return;
-//		        }
-//		        Question selection = (Question)rawSelection;
-//				if (selection.getFilename() == null) {
-//					return;
-//				}
-//		        EditorFile file = getFileFromName(selection.getFilename());
-//		        if (file == null) {
-//		        	return;
-//		        }
-//		        // Source: https://www.eclipse.org/forums/index.php?t=msg&th=51063&goto=163463&#msg_163463
-//		        IEditorPart part = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActiveEditor();
-//		        if (part instanceof MultiPageEditorPart) {
-//		        	((MultiPageEditorPart) part).setActiveEditor(file.getEditorPart());
-//		        }
-//		    }
-//		});
+		viewer.addSelectionChangedListener(new ISelectionChangedListener() {
+		    public void selectionChanged(final SelectionChangedEvent event) {
+		        Object rawSelection = ((IStructuredSelection)event.getSelection()).getFirstElement();
+		        if (rawSelection == null || !(rawSelection instanceof Question)) {
+		        	return;
+		        }
+		        Question question = (Question)rawSelection;
+				if (question.getFilename() == null) {
+					return;
+				}
+		        EditorFile file = getFileFromName(question.getFilename());
+		        if (file == null) {
+		        	return;
+		        }
+		        file.getEditorPart().setFocus();
+		        goToLine(file.getEditorPart(), question.getLineNumber());
+		    }
+		});
 
 		// Create the help context id for the viewer's control
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(viewer.getControl(), "edu.stanford.eduvention.viewer");

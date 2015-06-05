@@ -6,13 +6,15 @@ public class Question {
 	private String message;
 	private String filename;
 	private int lineNumber;
+	private String timestamp;
 	
-	public Question(String role, String message, String filename, int lineNumber) {
+	public Question(String role, String message, String filename, int lineNumber, String timestamp) {
 		super();
 		this.role = role;
 		this.message = message;
 		this.filename = filename;
 		this.lineNumber = lineNumber;
+		this.timestamp = timestamp;
 	}
 	public String getRole() {
 		return role;
@@ -38,6 +40,12 @@ public class Question {
 	public void setLineNumber(int lineNumber) {
 		this.lineNumber = lineNumber;
 	}
+	public String getTimestamp() {
+		return timestamp;
+	}
+	public void setTimestamp(String timestamp) {
+		this.timestamp = timestamp;
+	}	
 	@Override
 	public String toString() {
 		return role + ": " + message;
