@@ -34,11 +34,10 @@ public class DecompMetric implements IMetric  {
 		ArrayList<Method> methods = (ArrayList<Method>) s.getMethods();
 		for( Method m : methods){
 			String alertContent = getAlertContentString(m);
-			if(alertContent == null){
-				return null;
+			if(alertContent != null){
+				Alert a = new Alert("decomposition-method", aFile.name, alertContent, m.getBeginLine());
+				alerts.add(a);
 			}
-			Alert a = new Alert("decomposition-method", aFile.name, alertContent, m.getBeginLine());
-			alerts.add(a);
 		}
 		return alerts;
 	}
