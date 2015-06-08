@@ -35,7 +35,8 @@ public class NetworkManager {
 	private Object[] questions = {"Connect to the Internet and save your file to get your questions."};
 	private long lastUpdate = 0;
 	private static final int MIN_CHANGE_INTERVAL = 3000;
-
+	// TODO: Get assignment ID from project properties
+	private static final int ASSIGNMENT_ID = 6;
 	private static final String GET_QUESTION_URL = "http://eduvention-website.herokuapp.com/get_comments?sunet="; // Append SUNet
 	private static final String POST_QUESTION_URL = "http://eduvention-website.herokuapp.com/question/create";
 	private static final String POST_SNAPSHOT_URL = "http://eduvention-website.herokuapp.com/snapshots/create";
@@ -110,7 +111,6 @@ public class NetworkManager {
 	    		JsonArray arr = jsonReader.readArray();
 	    		jsonReader.close();
 	    		for(int i = 0; i < arr.size(); i++){
-	    			// TODO: Enable getting file info from JSON
 	    			JsonObject jobj = arr.getJsonObject(i);
 	    			if (jobj == null) {
 	    				continue;
@@ -120,7 +120,8 @@ public class NetworkManager {
 	    			String message = arr.getJsonObject(i).getString("message");
 	    			String filename = arr.getJsonObject(i).getString("filename");
 	    			int lineNumber = arr.getJsonObject(i).getInt("line_number");
-	    			Question question = new Question(poster, message, filename, lineNumber);
+	    			String timestamp = arr.getJsonObject(i).getString("created_at");
+	    			Question question = new Question(poster, message, filename, lineNumber, timestamp);
 	    			questions.add(question);
 	            }
 	    		setQuestions(questions.toArray());
@@ -213,8 +214,7 @@ public class NetworkManager {
 
 		JsonObject j = factory
 				.createObjectBuilder()
-				.add("assignment_id", 6)
-				// TODO store assignment_id
+				.add("assignment_id", ASSIGNMENT_ID)
 				.add("student_id", sunet)
 				.add("snapshot", contents)
 				.add("datetime",
@@ -240,8 +240,7 @@ public class NetworkManager {
 		}
 		String json = factory
 				.createObjectBuilder()
-				.add("assignment_id", 6)
-				// TODO store assignment_id
+				.add("assignment_id", ASSIGNMENT_ID)
 				.add("student_id", sunet)
 				.add("filename", filename)
 				.add("line_number", line_number)
